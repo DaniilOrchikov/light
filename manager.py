@@ -11,7 +11,7 @@ class Manager:
         self.screen = screen
         self.l = pygame.Surface((WIDTH, HEIGHT))
         self.sc = pygame.Surface((WIDTH, HEIGHT))
-        self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        self.sc_light = pygame.Surface((WIDTH, HEIGHT))
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
         self.bounding_box = [*[(i * TILE, -2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
                              *[(i * TILE, HEIGHT + 2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
@@ -24,10 +24,10 @@ class Manager:
         render = self.font.render(display_fps, False, RED)
         self.screen.blit(render, FPS_POS)
 
-    def mini_map(self, player):
-        self.sc.fill((25, 25, 25))
-        self.l.fill((50, 50, 50))
-        # self.sc_light.fill((0, 0, 0, 0))
+    def paint(self, player):
+        self.sc.fill((80, 80, 80))
+        self.l.fill((30, 30, 30))
+        self.sc_light.fill((30, 30, 30))
         for tile in world_map:
             tile.paint(self.sc, player.scroll)
 
@@ -36,12 +36,13 @@ class Manager:
         map_for_lighting_copy = map_for_lighting.union(bounding_box)
         rays = ray_casting(player.pos, player.angle, map_for_lighting_copy, player.scroll, FOV, True)
         try:
-            pygame.draw.polygon(self.l, (0, 0, 0), rays)
+            pygame.draw.polygon(self.sc_light, (0, 0, 0), rays)
             # gfxdraw.aapolygon(self.l, rays, (0, 0, 0))
         except ValueError:
             pass
         for i in light_emitter_map:
             i.paint(self.l, player.scroll, map_for_lighting.copy())
+        self.sc.blit(self.sc_light, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.sc.blit(self.l, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         player.paint(self.sc)
         self.screen.blit(self.sc, (0, 0))
