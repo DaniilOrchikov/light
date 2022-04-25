@@ -1,12 +1,12 @@
 import math
 
 # game settings
-WIDTH = 1400
-HEIGHT = 800
+WIDTH = 990
+HEIGHT = 558
 HALF_WIDTH = WIDTH // 2
 HALF_HEIGHT = HEIGHT // 2
 FPS = 60
-TILE = 25
+TILE = 18
 FPS_POS = (WIDTH - 65, 5)
 
 # minimap settings
@@ -26,7 +26,7 @@ SCALE = WIDTH // NUM_RAYS
 # player settings
 player_pos = (200, 200)
 player_angle = 0
-player_speed = 3
+player_speed = 2
 
 # colors
 WHITE = (255, 255, 255)
