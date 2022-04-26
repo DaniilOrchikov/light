@@ -11,12 +11,14 @@ class LightEmitter:
         self.im = pygame.image.load('data/lamp.png').convert_alpha()
         self.sc_light = pygame.Surface((WIDTH, HEIGHT))
 
-    def paint(self, sc, screen, scroll, map_for_lighting):
+    def paint_light(self, sc, map_for_lighting, intensity):
         rays = ray_casting((self.x + TILE // 2, self.y + TILE // 2),
-                           0, map_for_lighting, scroll, math.pi * 2, False)[1:]
+                           0, map_for_lighting, [0.0, 0.0], math.pi * 2, True)[1:]
         try:
-            pygame.draw.polygon(sc, (0, 0, 0), rays)
+            pygame.draw.polygon(sc, intensity, rays)
         except ValueError:
             pass
 
-        screen.blit(self.im, (self.x - scroll[0], self.y - scroll[1]))
+    def paint(self, screen):
+
+        screen.blit(self.im, (self.x, self.y))

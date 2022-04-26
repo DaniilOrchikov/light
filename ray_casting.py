@@ -9,9 +9,9 @@ def mapping(a, b):
 
 
 @njit(fastmath=True, cache=True)
-def ray_casting(player_pos, player_angle, world_map, scroll, fov, leave_the_initial_pos):
+def ray_casting(player_pos, player_angle, world_map, scroll, fov, its_lamp):
     rays = [(0.0, 0.0)]
-    if leave_the_initial_pos:
+    if not its_lamp:
         rays = [(player_pos[0] - scroll[0], player_pos[1] - scroll[1])]
     ox, oy = player_pos
     xm, ym = mapping(ox, oy)
@@ -33,9 +33,6 @@ def ray_casting(player_pos, player_angle, world_map, scroll, fov, leave_the_init
                 Y = y
                 break
             x += dx * TILE
-        # if X < 0:
-        #     X = x + dx
-        #     Y = y
 
         # horizontals
         y, dy = (ym + TILE, 1) if sin_a >= 0 else (ym, -1)
@@ -50,11 +47,10 @@ def ray_casting(player_pos, player_angle, world_map, scroll, fov, leave_the_init
                 break
             y += dy * TILE
 
-        # if Y < 0:
-        #     X = x
-        #     Y = y + dy
-
         if X >= 0 and Y >= 0:
+            if its_lamp:
+                if math.sqrt((player_pos[0] - X) ** 2 + (player_pos[1] - Y) ** 2) > MAX_DEPTH:
+                    X, Y = cos_a * MAX_DEPTH + player_pos[0], sin_a * MAX_DEPTH + player_pos[1]
             rays.append((X - scroll[0], Y - scroll[1]))
 
         cur_angle += fov / NUM_RAYS

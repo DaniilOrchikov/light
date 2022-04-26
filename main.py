@@ -14,7 +14,7 @@ from manager import Manager
 clock = pygame.time.Clock()
 physics = Physics(world_map)
 player = Player(physics)
-drawing = Manager(screen)
+drawing = Manager(screen, player)
 
 
 while True:

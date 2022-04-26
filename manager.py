@@ -1,14 +1,14 @@
+from random import randint
+
 import pygame
 
 from settings import *
-from ray_casting import ray_casting
 from map import world_map, map_for_lighting, light_emitter_map, foreground_world_map
 
 
 class Manager:
-    def __init__(self, screen):
+    def __init__(self, screen, player):
         self.screen = screen
-        self.sc_light_emitter = pygame.Surface((WIDTH, HEIGHT))
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT))
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
@@ -25,6 +25,10 @@ class Manager:
             tile.paint(self.sc_middle_plan)
         for tile in foreground_world_map:
             tile.paint(self.sc_middle_plan)
+        for i in light_emitter_map:
+            i.paint(self.sc_middle_plan)
+        self.sc_light_emitter = pygame.Surface((WIDTH * 3, HEIGHT * 3))
+
 
     def fps(self, clock):
         display_fps = str(int(clock.get_fps()))
@@ -33,21 +37,18 @@ class Manager:
 
     def paint(self, player):
         self.sc.fill((80, 80, 80))
-        self.sc_light_emitter.fill((30, 30, 30))
         self.sc_light.fill((30, 30, 30))
 
         bounding_box = set(((i[0] + player.scroll[0]) // TILE * TILE, (i[1] + player.scroll[1]) // TILE * TILE) for i in
                            self.bounding_box)
         map_for_lighting_copy = map_for_lighting.union(bounding_box)
-        rays = ray_casting(player.pos, player.angle, map_for_lighting_copy, player.scroll, FOV, True)
-        try:
-            pygame.draw.polygon(self.sc_light, (0, 0, 0), rays)
-        except ValueError:
-            pass
+        self.sc_light_emitter.fill((30, 30, 30))
         for i in light_emitter_map:
-            i.paint(self.sc_light_emitter, self.sc, player.scroll, map_for_lighting.copy())
+            intensity = 0
+            i.paint_light(self.sc_light_emitter, map_for_lighting.copy(), (intensity, intensity, intensity))
+        self.sc.blit(self.sc_light_emitter, (-player.scroll[0], -player.scroll[1]), special_flags=pygame.BLEND_RGBA_SUB)
+        player.paint_light(self.sc_light, map_for_lighting_copy)
         self.sc.blit(self.sc_light, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-        self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         player.paint(self.sc)
         self.sc.blit(self.sc_middle_plan, (-player.scroll[0], -player.scroll[1]))
         self.sc.blit(self.sc_foreground, (-player.scroll[0], -player.scroll[1]))
