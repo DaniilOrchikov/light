@@ -7,6 +7,7 @@ from map import world_map, map_for_lighting, light_emitter_map, foreground_world
 class Manager:
     def __init__(self, screen, player):
         self.screen = screen
+        self.player = player
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
@@ -33,11 +34,11 @@ class Manager:
         render = self.font.render(display_fps, False, RED)
         self.screen.blit(render, FPS_POS)
 
-    def paint(self, player):
+    def paint(self):
         self.sc.fill((120, 120, 120))
         self.sc_light.fill((50, 50, 50, 0))
 
-        bounding_box = set(((i[0] + player.scroll[0]) // TILE * TILE, (i[1] + player.scroll[1]) // TILE * TILE) for i in
+        bounding_box = set(((i[0] + self.player.scroll[0]) // TILE * TILE, (i[1] + self.player.scroll[1]) // TILE * TILE) for i in
                            self.bounding_box)
         # map_for_lighting_copy = map_for_lighting.union(bounding_box)
         self.sc_light_emitter1.fill((40, 40, 40))
@@ -45,12 +46,12 @@ class Manager:
         for i in light_emitter_map:
             intensity = 0
             i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
-                          (intensity, intensity, intensity), player.scroll, map_for_lighting)
+                          (intensity, intensity, intensity), self.player.scroll, map_for_lighting)
         self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-        self.sc.blit(self.sc_middle_plan, (-player.scroll[0], -player.scroll[1]))
+        self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-        player.paint_light(self.sc_light, map_for_lighting)
+        self.player.paint_light(self.sc_light, map_for_lighting)
         self.sc.blit(self.sc_light, (0, 0))
-        player.paint(self.sc)
-        self.sc.blit(self.sc_foreground, (-player.scroll[0], -player.scroll[1]))
+        self.player.paint(self.sc)
+        self.sc.blit(self.sc_foreground, (-self.player.scroll[0], -self.player.scroll[1]))
         self.screen.blit(self.sc, (0, 0))

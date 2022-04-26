@@ -20,7 +20,7 @@ class Player:
         self.im = pygame.Surface((self.size, self.size))
         self.im.fill((255, 0, 0))
         self.physics = physics
-        self.light_im = pygame.image.load('data/light.png').convert_alpha()
+        self.light_im = pygame.image.load('data/light/light.png').convert_alpha()
 
     @property
     def pos(self):

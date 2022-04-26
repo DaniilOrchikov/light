@@ -25,7 +25,7 @@ while True:
     player.movement()
     screen.fill((80, 80, 255))
 
-    drawing.paint(player)
+    drawing.paint()
     drawing.fps(clock)
 
     pygame.display.flip()

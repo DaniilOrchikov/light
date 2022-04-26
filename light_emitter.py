@@ -8,11 +8,11 @@ from settings import *
 
 
 class LightEmitter:
-    light_im = pygame.image.load('data/lamp_light.png').convert_alpha()
+    light_im = pygame.image.load('data/light/lamp_light.png').convert_alpha()
 
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.im = pygame.image.load('data/lamp.png').convert_alpha()
+        self.im = pygame.image.load('data/tiles/lamp.png').convert_alpha()
         self.sc_light = pygame.Surface((WIDTH, HEIGHT))
         self.light_im = LightEmitter.light_im.convert_alpha()
 

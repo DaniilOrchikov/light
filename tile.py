@@ -18,13 +18,13 @@ class Tile:
 class Wall(Tile):
     def __init__(self, x, y):
         super(Wall, self).__init__(x, y)
-        self.im = pygame.image.load('data/wall.png').convert_alpha()
+        self.im = pygame.image.load('data/tiles/wall.png').convert_alpha()
 
 
 class Window(Tile):
     def __init__(self, x, y):
         super(Window, self).__init__(x, y)
-        self.im = pygame.image.load('data/window.png').convert_alpha()
+        self.im = pygame.image.load('data/tiles/window.png').convert_alpha()
 
 
 class Tree(Tile):
