@@ -26,7 +26,7 @@ class Player:
     def pos(self):
         return self.rect.x + self.size // 2, self.rect.y + self.size // 2
 
-    def movement(self):
+    def movement(self, sc):
         move = [0, 0]
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
