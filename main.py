@@ -23,10 +23,10 @@ while True:
             pygame.quit()
             sys.exit()
     player.movement()
-    screen.fill((25, 25, 25))
+    screen.fill((80, 80, 255))
 
     drawing.paint(player)
     drawing.fps(clock)
 
     pygame.display.flip()
-    clock.tick(FPS)
+    clock.tick()

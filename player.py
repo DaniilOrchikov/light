@@ -1,3 +1,5 @@
+import time
+
 from ray_casting import ray_casting
 from settings import *
 import pygame
@@ -40,9 +42,9 @@ class Player:
         self.scroll[1] += round((self.rect.y - self.scroll[1] - HALF_HEIGHT) / 10, 2)
 
     def paint_light(self, sc_light, map_for_lighting):
-        rays = ray_casting(self.pos, self.angle, map_for_lighting, self.scroll, FOV, False)
+        rays = ray_casting(self.pos, self.angle, map_for_lighting, self.scroll, FOV, False, time.time())
         try:
-            pygame.draw.polygon(sc_light, (0, 0, 0), rays)
+            pygame.draw.polygon(sc_light, (234, 224, 191, 100), rays)
         except ValueError:
             pass
         sc_light.blit(self.light_im, (self.rect.x - self.scroll[0] - self.light_im.get_width() // 2 + self.size // 2,

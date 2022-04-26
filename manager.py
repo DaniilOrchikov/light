@@ -1,6 +1,9 @@
+import time
 from random import randint
 
+import numpy as np
 import pygame
+from PIL import Image, ImageFilter
 
 from settings import *
 from map import world_map, map_for_lighting, light_emitter_map, foreground_world_map
@@ -10,7 +13,7 @@ class Manager:
     def __init__(self, screen, player):
         self.screen = screen
         self.sc = pygame.Surface((WIDTH, HEIGHT))
-        self.sc_light = pygame.Surface((WIDTH, HEIGHT))
+        self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
         self.bounding_box = [*[(i * TILE, -2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
                              *[(i * TILE, HEIGHT + 2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
@@ -24,11 +27,11 @@ class Manager:
         for tile in world_map:
             tile.paint(self.sc_middle_plan)
         for tile in foreground_world_map:
-            tile.paint(self.sc_middle_plan)
+            tile.paint(self.sc_foreground)
         for i in light_emitter_map:
             i.paint(self.sc_middle_plan)
-        self.sc_light_emitter = pygame.Surface((WIDTH * 3, HEIGHT * 3))
-
+        self.sc_light_emitter = pygame.Surface((WIDTH, HEIGHT))
+        self.sc_light_emitter1 = pygame.Surface((WIDTH, HEIGHT))
 
     def fps(self, clock):
         display_fps = str(int(clock.get_fps()))
@@ -36,20 +39,24 @@ class Manager:
         self.screen.blit(render, FPS_POS)
 
     def paint(self, player):
-        self.sc.fill((80, 80, 80))
-        self.sc_light.fill((30, 30, 30))
+        self.sc.fill((120, 120, 120))
+        self.sc_light.fill((50, 50, 50, 0))
 
         bounding_box = set(((i[0] + player.scroll[0]) // TILE * TILE, (i[1] + player.scroll[1]) // TILE * TILE) for i in
                            self.bounding_box)
         map_for_lighting_copy = map_for_lighting.union(bounding_box)
-        self.sc_light_emitter.fill((30, 30, 30))
+        self.sc_light_emitter1.fill((40, 40, 40))
+        self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
             intensity = 0
-            i.paint_light(self.sc_light_emitter, map_for_lighting.copy(), (intensity, intensity, intensity))
-        self.sc.blit(self.sc_light_emitter, (-player.scroll[0], -player.scroll[1]), special_flags=pygame.BLEND_RGBA_SUB)
-        player.paint_light(self.sc_light, map_for_lighting_copy)
-        self.sc.blit(self.sc_light, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-        player.paint(self.sc)
+            i.paint_light(self.sc_light_emitter, self.sc_light_emitter1, map_for_lighting.copy(),
+                          (intensity, intensity, intensity),
+                          player.scroll)
+        self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.sc.blit(self.sc_middle_plan, (-player.scroll[0], -player.scroll[1]))
+        self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+        player.paint_light(self.sc_light, map_for_lighting_copy)
+        self.sc.blit(self.sc_light, (0, 0))
+        player.paint(self.sc)
         self.sc.blit(self.sc_foreground, (-player.scroll[0], -player.scroll[1]))
         self.screen.blit(self.sc, (0, 0))
