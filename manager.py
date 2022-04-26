@@ -11,11 +11,11 @@ class Manager:
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
-        self.bounding_box = [*[(i * TILE, -2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
-                             *[(i * TILE, HEIGHT + 2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
-                             *[(-2 * TILE, i * TILE) for i in range(-2, HEIGHT // TILE + 2)],
-                             *[(WIDTH + 2 * TILE, i * TILE) for i in range(-2, HEIGHT // TILE + 2)]]
-        self.bounding_box = set(self.bounding_box)
+        # self.bounding_box = [*[(i * TILE, -2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
+        #                      *[(i * TILE, HEIGHT + 2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
+        #                      *[(-2 * TILE, i * TILE) for i in range(-2, HEIGHT // TILE + 2)],
+        #                      *[(WIDTH + 2 * TILE, i * TILE) for i in range(-2, HEIGHT // TILE + 2)]]
+        # self.bounding_box = set(self.bounding_box)
         self.sc_middle_plan = pygame.Surface((WIDTH * 3, HEIGHT * 3), pygame.SRCALPHA)
         self.sc_middle_plan.fill((0, 0, 0, 0))
         self.sc_foreground = pygame.Surface((WIDTH * 3, HEIGHT * 3), pygame.SRCALPHA)
@@ -38,9 +38,11 @@ class Manager:
         self.sc.fill((120, 120, 120))
         self.sc_light.fill((50, 50, 50, 0))
 
-        bounding_box = set(((i[0] + self.player.scroll[0]) // TILE * TILE, (i[1] + self.player.scroll[1]) // TILE * TILE) for i in
-                           self.bounding_box)
-        # map_for_lighting_copy = map_for_lighting.union(bounding_box)
+        # bounding_box = set(((i[0] + self.player.scroll[0]) // TILE * TILE, (i[1] + self.player.scroll[1]) // TILE * TILE)
+        #                    for i in self.bounding_box)
+        # map_for_lighting_copy = map_for_lighting.copy()
+        # for i in bounding_box:
+        #     map_for_lighting_copy[i] = 1
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
