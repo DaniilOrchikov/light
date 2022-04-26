@@ -50,8 +50,7 @@ class Manager:
         for i in light_emitter_map:
             intensity = 0
             i.paint_light(self.sc_light_emitter, self.sc_light_emitter1, map_for_lighting.copy(),
-                          (intensity, intensity, intensity),
-                          player.scroll)
+                          (intensity, intensity, intensity), player.scroll)
         self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.sc.blit(self.sc_middle_plan, (-player.scroll[0], -player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)

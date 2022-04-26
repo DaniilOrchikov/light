@@ -12,14 +12,14 @@ def mapping(a, b):
 
 
 @njit(fastmath=True, cache=True)
-def ray_casting(player_pos, player_angle, world_map, scroll, fov, its_lamp, time):
+def ray_casting(player_pos, player_angle, world_map, fov, its_lamp):
     rays = [(0.0, 0.0)]
     if not its_lamp:
-        rays = [(player_pos[0] - scroll[0], player_pos[1] - scroll[1])]
+        rays = [(player_pos[0], player_pos[1])]
     ox, oy = player_pos
     xm, ym = mapping(ox, oy)
     cur_angle = player_angle - fov / 2
-    m_d = MAX_DEPTH + math.sin(time)
+    m_d = MAX_DEPTH
     for ray in range(NUM_RAYS):
         sin_a = math.sin(cur_angle)
         cos_a = math.cos(cur_angle)
@@ -57,7 +57,7 @@ def ray_casting(player_pos, player_angle, world_map, scroll, fov, its_lamp, time
             if its_lamp:
                 if math.sqrt((player_pos[0] - X) ** 2 + (player_pos[1] - Y) ** 2) > m_d:
                     X, Y = cos_a * m_d + player_pos[0], sin_a * m_d + player_pos[1]
-            rays.append((X - scroll[0], Y - scroll[1]))
+            rays.append((X, Y))
 
         cur_angle += fov / NUM_RAYS
     return rays

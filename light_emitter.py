@@ -1,5 +1,6 @@
 import time
 
+import numpy as np
 import pygame
 
 from ray_casting import ray_casting
@@ -16,8 +17,8 @@ class LightEmitter:
         self.light_im = LightEmitter.light_im.convert_alpha()
 
     def paint_light(self, sc, sc1, map_for_lighting, intensity, scroll):
-        rays = ray_casting((self.x + TILE // 2, self.y + TILE // 2),
-                           0, map_for_lighting, scroll, math.pi * 2, True, time.time())[1:]
+        map_for_lighting = [(str(i[0]), str(i[1])) for i in map_for_lighting]
+        rays = ray_casting((self.x + TILE // 2, self.y + TILE // 2), 0, map_for_lighting, math.pi * 2, True)[1:]
         try:
             pygame.draw.polygon(sc, intensity, rays)
         except ValueError:
