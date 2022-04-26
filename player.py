@@ -1,6 +1,3 @@
-import time
-
-import numpy as np
 from numba import njit
 
 from ray_casting import ray_casting
@@ -47,9 +44,8 @@ class Player:
         self.scroll[0] += round((self.rect.x - self.scroll[0] - HALF_WIDTH) / 10, 2)
         self.scroll[1] += round((self.rect.y - self.scroll[1] - HALF_HEIGHT) / 10, 2)
 
-    def paint_light(self, sc_light, map_for_lighting):
-        map_for_lighting = [(str(i[0]), str(i[1])) for i in map_for_lighting]
-        rays = ray_casting(self.pos, self.angle, map_for_lighting, FOV, False)
+    def paint_light(self, sc_light, world_map):
+        rays = ray_casting(self.pos, self.angle, FOV, False, world_map)
         rays = [(i[0] - self.scroll[0], i[1] - self.scroll[1]) for i in rays]
         try:
             pygame.draw.polygon(sc_light, (234, 224, 191, 100), rays)

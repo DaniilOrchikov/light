@@ -29,4 +29,4 @@ while True:
     drawing.fps(clock)
 
     pygame.display.flip()
-    clock.tick()
+    clock.tick(FPS)

@@ -1,9 +1,4 @@
-import time
-from random import randint
-
-import numpy as np
 import pygame
-from PIL import Image, ImageFilter
 
 from settings import *
 from map import world_map, map_for_lighting, light_emitter_map, foreground_world_map
@@ -44,17 +39,17 @@ class Manager:
 
         bounding_box = set(((i[0] + player.scroll[0]) // TILE * TILE, (i[1] + player.scroll[1]) // TILE * TILE) for i in
                            self.bounding_box)
-        map_for_lighting_copy = map_for_lighting.union(bounding_box)
+        # map_for_lighting_copy = map_for_lighting.union(bounding_box)
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
             intensity = 0
-            i.paint_light(self.sc_light_emitter, self.sc_light_emitter1, map_for_lighting.copy(),
-                          (intensity, intensity, intensity), player.scroll)
+            i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
+                          (intensity, intensity, intensity), player.scroll, map_for_lighting)
         self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.sc.blit(self.sc_middle_plan, (-player.scroll[0], -player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-        player.paint_light(self.sc_light, map_for_lighting_copy)
+        player.paint_light(self.sc_light, map_for_lighting)
         self.sc.blit(self.sc_light, (0, 0))
         player.paint(self.sc)
         self.sc.blit(self.sc_foreground, (-player.scroll[0], -player.scroll[1]))

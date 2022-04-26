@@ -1,6 +1,3 @@
-import time
-from random import randint
-
 from numba import njit
 
 from settings import *
@@ -12,10 +9,10 @@ def mapping(a, b):
 
 
 @njit(fastmath=True, cache=True)
-def ray_casting(player_pos, player_angle, world_map, fov, its_lamp):
+def ray_casting(player_pos, player_angle, fov, its_lamp, world_map):
     rays = [(0.0, 0.0)]
     if not its_lamp:
-        rays = [(player_pos[0], player_pos[1])]
+        rays = [(float(player_pos[0]), float(player_pos[1]))]
     ox, oy = player_pos
     xm, ym = mapping(ox, oy)
     cur_angle = player_angle - fov / 2

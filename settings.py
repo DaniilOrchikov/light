@@ -17,7 +17,7 @@ MAP_POS = (0, HEIGHT - HEIGHT // MAP_SCALE)
 # ray casting settings
 FOV = math.pi / 3
 HALF_FOV = FOV / 2
-NUM_RAYS = 200
+NUM_RAYS = 300
 MAX_DEPTH = 300
 DELTA_ANGLE = FOV / NUM_RAYS
 DIST = NUM_RAYS / (2 * math.tan(HALF_FOV))
