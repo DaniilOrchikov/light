@@ -38,17 +38,20 @@ class Manager:
         self.sc.fill((120, 120, 120))
         self.sc_light.fill((50, 50, 50, 0))
 
-        # bounding_box = set(((i[0] + self.player.scroll[0]) // TILE * TILE, (i[1] + self.player.scroll[1]) // TILE * TILE)
-        #                    for i in self.bounding_box)
+        # bounding_box = set(
+        #     ((i[0] + self.player.scroll[0]) // TILE * TILE, (i[1] + self.player.scroll[1]) // TILE * TILE)
+        #     for i in self.bounding_box)
         # map_for_lighting_copy = map_for_lighting.copy()
         # for i in bounding_box:
         #     map_for_lighting_copy[i] = 1
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
-            intensity = 0
-            i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
-                          (intensity, intensity, intensity), self.player.scroll, map_for_lighting)
+            if self.player.rect.x - LIGHT_RENDERING_RANGE[0] < i.x < self.player.rect.x + LIGHT_RENDERING_RANGE[0] and \
+                    self.player.rect.y - LIGHT_RENDERING_RANGE[1] < i.y < self.player.rect.y + LIGHT_RENDERING_RANGE[1]:
+                intensity = 0
+                i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
+                              (intensity, intensity, intensity), self.player.scroll, map_for_lighting)
         self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)

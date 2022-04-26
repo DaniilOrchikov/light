@@ -19,7 +19,6 @@ drawing = Manager(screen, player)
 pygame.mouse.set_visible(False)
 cursor = Cursor()
 
-
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
