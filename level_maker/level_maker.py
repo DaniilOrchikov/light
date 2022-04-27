@@ -16,11 +16,11 @@ class LevelMaker:
         self.brush = 'w'
         self.board = [['.' for _ in range(self.width)] for _ in range(self.height)]
         self.im_board = {'.': pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA),
-                         'w': pygame.image.load('../data/wall.png').convert_alpha(),
-                         'l': pygame.image.load('../data/lamp.png').convert_alpha()}
+                         'w': pygame.image.load('../data/tiles/wall.png').convert_alpha(),
+                         'l': pygame.image.load('../data/tiles/lamp.png').convert_alpha()}
         self.im_board1 = [[pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA),
-                           pygame.image.load('../data/wall.png').convert_alpha(),
-                           pygame.image.load('../data/lamp.png').convert_alpha()]]
+                           pygame.image.load('../data/tiles/wall.png').convert_alpha(),
+                           pygame.image.load('../data/tiles/lamp.png').convert_alpha()]]
         self.tile_board = [['.', 'w', 'l', '', ''],
                            ['', '', '', '', ''],
                            ['', '', '', '', ''],

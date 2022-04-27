@@ -16,8 +16,8 @@ class LightEmitter:
         self.sc_light = pygame.Surface((WIDTH, HEIGHT))
         self.light_im = LightEmitter.light_im.convert_alpha()
 
-    def paint_light(self, sc, sc1, intensity, scroll, world_map):
-        rays = ray_casting((self.x + TILE // 2, self.y + TILE // 2), 0, math.pi * 2, True, world_map)[1:]
+    def paint_light(self, sc, sc1, intensity, scroll, world_map, door_map):
+        rays = ray_casting((self.x + TILE // 2, self.y + TILE // 2), 0, math.pi * 2, True, world_map, door_map)[1:]
         rays = [(i[0] - scroll[0], i[1] - scroll[1]) for i in rays]
         try:
             pygame.draw.polygon(sc, intensity, rays)

@@ -9,11 +9,11 @@ def mapping(a, b):
 
 
 @njit(fastmath=True, cache=True)
-def ray_casting(player_pos, player_angle, fov, its_lamp, world_map):
+def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
     rays = [(0.0, 0.0)]
     m_d = MAX_DEPTH
     if not its_lamp:
-        m_d *= 2
+        m_d *= 2.4
         rays = [(float(player_pos[0]), float(player_pos[1]))]
     ox, oy = player_pos
     xm, ym = mapping(ox, oy)
@@ -30,10 +30,9 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map):
         for i in range(0, WIDTH * 2, TILE):
             depth_v = (x - ox) / cos_a
             y = oy + depth_v * sin_a
-            if mapping(x + dx, y) in world_map or \
+            if mapping(x + dx, y) in world_map or (int((x + dx) // 8) * 8, int(y // 8) * 8) in door_map or \
                     math.sqrt((player_pos[0] - x - dx) ** 2 + (player_pos[1] - y) ** 2) > m_d:
-                X = x + dx
-                Y = y
+                X, Y = x + dx, y
                 break
             x += dx * TILE
 
@@ -42,12 +41,10 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map):
         for i in range(0, HEIGHT * 2, TILE):
             depth_h = (y - oy) / sin_a
             x = ox + depth_h * cos_a
-
-            if mapping(x, y + dy) in world_map or \
+            if mapping(x, y + dy) in world_map or (int(x // 8) * 8, int((y + dy) // 8) * 8) in door_map or \
                     math.sqrt((player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2) > m_d:
                 if abs(Y - player_pos[1]) > abs(y + dy - player_pos[1]):
-                    Y = y + dy
-                    X = x
+                    X, Y = x, y + dy
                 break
             y += dy * TILE
 

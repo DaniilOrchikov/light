@@ -12,6 +12,7 @@ with open('map.txt', 'r') as txt_map:
 physics_world_map = []
 world_map = set()
 map_for_lighting = Dict.empty(key_type=types.UniTuple(int64, 2), value_type=int64)
+door_map = Dict.empty(key_type=types.UniTuple(int64, 2), value_type=int64)
 light_emitter_map = set()
 foreground_world_map = set()
 for j, row in enumerate(txt_map):
