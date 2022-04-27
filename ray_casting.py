@@ -27,10 +27,10 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
 
         # verticals
         x, dx = (xm + TILE, 1) if cos_a >= 0 else (xm, -1)
-        for i in range(0, WIDTH * 2, TILE):
+        for i in range(0, WIDTH * 2, 8):
             depth_v = (x - ox) / cos_a
             y = oy + depth_v * sin_a
-            if mapping(x + dx, y) in world_map or (int((x + dx) // 8) * 8, int(y // 8) * 8) in door_map or \
+            if mapping(x + dx, y) in world_map or (int((x + dx) // 8), int(y) // 8) in door_map or \
                     math.sqrt((player_pos[0] - x - dx) ** 2 + (player_pos[1] - y) ** 2) > m_d:
                 X, Y = x + dx, y
                 break
@@ -38,10 +38,10 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
 
         # horizontals
         y, dy = (ym + TILE, 1) if sin_a >= 0 else (ym, -1)
-        for i in range(0, HEIGHT * 2, TILE):
+        for i in range(0, HEIGHT * 2, 8):
             depth_h = (y - oy) / sin_a
             x = ox + depth_h * cos_a
-            if mapping(x, y + dy) in world_map or (int(x // 8) * 8, int((y + dy) // 8) * 8) in door_map or \
+            if mapping(x, y + dy) in world_map or (int(x) // 8, int((y + dy) // 8)) in door_map or \
                     math.sqrt((player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2) > m_d:
                 if abs(Y - player_pos[1]) > abs(y + dy - player_pos[1]):
                     X, Y = x, y + dy

@@ -10,7 +10,7 @@ def door_collision(player_rect, door_rect):
                     (player_rect[0] + player_rect[2], player_rect[1] + player_rect[3], player_rect[0],
                      player_rect[1] + player_rect[3]),
                     (player_rect[0], player_rect[1] + player_rect[3], player_rect[0], player_rect[1])]
-    door_lines = [door_rect]
+    door_lines = [*door_rect]
     for i in player_lines:
         for j in door_lines:
             xmax1, xmin1, xmax2, xmin2, ymax1, ymin1, ymax2, ymin2 = \
@@ -37,19 +37,22 @@ class Physics:
         map = np.array([np.array(i, dtype=object) for i in map])
         self.map = roll(np.array(map, dtype=object), np.array([[0 for _ in range(4)] for _ in range(4)]))
 
-    def collision_test(self, rect):
-        for i in self.map[rect.y // TILE - 1, rect.x // TILE - 1]:
-            for tile in i:
-                if tile is not None:
-                    if tile.rect.colliderect(rect):
-                        return tile
+    def collision_test(self, rect, map):
+        for tile in map:
+            if tile is not None:
+                if tile.rect.colliderect(rect):
+                    return tile
         return None
 
-    def movement(self, rect, move, door_rect):
+    def movement(self, rect, move, door):
         collisions = {'right': False, 'left': False, 'top': False, 'bottom': False, 'door': False}
+        map = []
+        [map.extend([j for j in i if j is not None]) for i in self.map[rect.y // TILE - 1, rect.x // TILE - 1]]
+        if door.rect is not None:
+            map.append(door)
         if move[0] != 0:
             rect.x += move[0]
-            collision_tile = self.collision_test(rect)
+            collision_tile = self.collision_test(rect, map)
             if collision_tile:
                 if move[0] > 0:
                     collisions['right'] = True
@@ -59,7 +62,7 @@ class Physics:
                     rect.left = collision_tile.rect.right
         if move[1] != 0:
             rect.y += move[1]
-            collision_tile = self.collision_test(rect)
+            collision_tile = self.collision_test(rect, map)
             if collision_tile:
                 if move[1] > 0:
                     collisions['bottom'] = True
@@ -67,14 +70,14 @@ class Physics:
                 else:
                     collisions['top'] = True
                     rect.top = collision_tile.rect.bottom
-
+        door_rect = door.line_collider
         door_col = door_collision((rect[0], rect[1], rect[2], rect[3]), door_rect)
         if door_col:
             if door_col[0] == rect[0] and door_col[1] == rect[1]:
                 collisions['door'] = 'top'
             elif door_col[0] == rect[0] + rect[2] and door_col[1] == rect[1]:
                 collisions['door'] = 'right'
-            elif door_col[0] == rect[0] + rect[2] and door_rect[1] == rect[1] + rect[3]:
+            elif door_col[0] == rect[0] + rect[2] and door_col[1] == rect[1] + rect[3]:
                 collisions['door'] = 'bottom'
             else:
                 collisions['door'] = 'left'

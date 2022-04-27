@@ -46,10 +46,12 @@ class Player:
             move[0] += player_speed
             self.right = 'True'
         self.is_move = move != [0, 0]
-        self.collisions = self.physics.movement(self.rect, move, door.rect)
+        self.collisions = self.physics.movement(self.rect, move, door)
         if self.collisions['door']:
             if self.is_move:
                 door.push(self.right, self.top)
+            elif door.open_count:
+                door.push('X', "x")
         mouse_pos = pygame.mouse.get_pos()
         self.angle = get_angle(mouse_pos)
 

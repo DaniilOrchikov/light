@@ -5,7 +5,7 @@ from cursor import Cursor
 from settings import *
 
 pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED)# | pygame.FULLSCREEN | pygame.DOUBLEBUF)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED | pygame.FULLSCREEN | pygame.DOUBLEBUF)
 
 from physics import Physics
 from player import Player
@@ -24,6 +24,12 @@ while 1:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                if manager.door.is_open:
+                    manager.door.close()
+                else:
+                    manager.door.open()
     player.movement(manager.door)
     screen.fill((80, 80, 255))
 

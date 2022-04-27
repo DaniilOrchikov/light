@@ -10,7 +10,7 @@ from map import world_map, map_for_lighting, light_emitter_map, foreground_world
 class Manager:
     def __init__(self, screen, player):
         self.screen = screen
-        self.door = Door(650, 150, player)
+        self.door = Door(18 * 14, 18 * 35, player)
         self.player = player
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -54,8 +54,8 @@ class Manager:
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
-            if self.player.rect.x - LIGHT_RENDERING_RANGE[0] < i.x < self.player.rect.x + LIGHT_RENDERING_RANGE[0] and \
-                    self.player.rect.y - LIGHT_RENDERING_RANGE[1] < i.y < self.player.rect.y + LIGHT_RENDERING_RANGE[1]:
+            if self.player.line_collider.x - LIGHT_RENDERING_RANGE[0] < i.x < self.player.line_collider.x + LIGHT_RENDERING_RANGE[0] and \
+                    self.player.line_collider.y - LIGHT_RENDERING_RANGE[1] < i.y < self.player.line_collider.y + LIGHT_RENDERING_RANGE[1]:
                 intensity = 0
                 i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
                               (intensity, intensity, intensity), self.player.scroll, map_for_lighting, door_map_copy)

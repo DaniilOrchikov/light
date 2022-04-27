@@ -28,7 +28,7 @@ LIGHT_RENDERING_RANGE = [MAX_DEPTH * 3.2, MAX_DEPTH * 2.2]
 # player settings
 player_pos = (200, 200)
 player_angle = 0
-player_speed = 2
+player_speed = 1
 
 # colors
 WHITE = (255, 255, 255)
