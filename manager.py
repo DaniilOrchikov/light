@@ -1,5 +1,3 @@
-import time
-
 import pygame
 
 from door import Door
@@ -10,7 +8,7 @@ from map import world_map, map_for_lighting, light_emitter_map, foreground_world
 class Manager:
     def __init__(self, screen, player):
         self.screen = screen
-        self.door = Door(18 * 14, 18 * 35, player)
+        self.door = Door(18 * 14, 18 * 39, player, math.pi)
         self.player = player
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)

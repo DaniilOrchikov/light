@@ -36,15 +36,28 @@ def line(x1, y1, x2, y2):
     return arr
 
 
+@njit(fastmath=True, cache=True)
+def normal_angle(angle):
+    angle = round(angle, 12)
+    while angle > math.pi * 2:
+        angle -= math.pi * 2
+    angle = round(angle, 12)
+    while angle < 0:
+        angle += math.pi * 2
+    angle = round(angle, 12)
+    return angle
+
+
 class Door:
-    def __init__(self, x, y, player):
+    def __init__(self, x, y, player, direction):
+        self.direction = {math.pi: '<', 0: '>', math.pi / 2: 'V', math.pi / 2 * 3: '^'}[direction]
         self.rect = None
-        self.player_stop = True
+        self.player_stop = False
         self.line_collider = None
         self.player = player
         self.light_rect = None
         self.x, self.y = x, y
-        self.ANGLE = math.pi / 2
+        self.ANGLE = direction
         self.angle = self.ANGLE
         self.length = 18 * 4
         self.m = True
@@ -72,18 +85,14 @@ class Door:
         self.light_rect = list(set(self.light_rect))
 
         if not self.is_open or self.player_stop:
-            if not self.is_open:
-                self.rect = pygame.Rect(self.x - 4, self.y, 8, self.length)
-            else:
-                if self.x1 < self.x:
-                    self.rect = pygame.Rect(self.x1, self.y1 - 4, self.length, 8)
-                else:
-                    self.rect = pygame.Rect(self.x, self.y - 4, self.length, 8)
+            self.get_rect()
         else:
             self.rect = None
-
-        self.line_collider = [(self.x - 5, self.y - 5, self.x1 - 5, self.y1 - 5),
-                              (self.x + 5, self.y + 5, self.x1 + 5, self.y1 + 5)]
+        if self.player_stop:
+            self.get_line_collider()
+        else:
+            self.line_collider = [(self.x - 5, self.y - 5, self.x1 - 5, self.y1 - 5),
+                                  (self.x + 5, self.y + 5, self.x1 + 5, self.y1 + 5)]
 
     def get(self, arr):
         for i in self.light_rect:
@@ -113,10 +122,7 @@ class Door:
 
     def push(self, right='None', top='None'):
         speed = 0.1
-        while self.angle < 0:
-            self.angle += math.pi * 2
-        while self.angle > math.pi * 2:
-            self.angle -= math.pi * 2
+        self.angle = normal_angle(self.angle)
         if right != 'None' or top != 'None':
             self.open_count = 0
         if self.is_open:
@@ -137,8 +143,7 @@ class Door:
                 angle += speed
             elif math.pi / 2 * 3 < self.angle <= math.pi * 2 and (right == 'False' or top == 'True'):
                 angle -= speed
-            if self.ANGLE + math.pi / 2 < self.angle < math.pi * 2 - 0.1 and angle > 0 or \
-                    math.pi * 2 > self.angle > math.pi + 0.1 and angle < 0:
+            if self.p_stop(angle):
                 self.player_stop = True
                 angle = 0
             else:
@@ -147,7 +152,62 @@ class Door:
         self.x1 = self.length * math.cos(self.angle) + self.x
         self.y1 = self.length * math.sin(self.angle) + self.y
 
+    def get_rect(self):
+        if not self.is_open:
+            if self.direction == 'V':
+                self.rect = pygame.Rect(self.x - 4, self.y, 8, self.length)
+            elif self.direction == '^':
+                self.rect = pygame.Rect(self.x1 - 4, self.y1, 8, self.length)
+            elif self.direction == '>':
+                self.rect = pygame.Rect(self.x, self.y - 4, self.length, 8)
+            else:
+                self.rect = pygame.Rect(self.x1, self.y1 - 4, self.length, 8)
+        else:
+            if self.direction in 'V^':
+                if self.x > self.x1:
+                    self.rect = pygame.Rect(self.x1, self.y1 - 4, self.length, 8)
+                else:
+                    self.rect = pygame.Rect(self.x, self.y - 4, self.length, 8)
+            else:
+                if self.y > self.y1:
+                    self.rect = pygame.Rect(self.x1 - 4, self.y1, 8, self.length)
+                else:
+                    self.rect = pygame.Rect(self.x - 4, self.y, 8, self.length)
+
+    def get_line_collider(self):
+        if self.direction == 'V':
+            self.line_collider = [(self.x, self.y - 5, self.x1, self.y1 - 5)]
+        elif self.direction == '^':
+            self.line_collider = [(self.x, self.y + 8, self.x1, self.y1 + 5)]
+        elif self.direction == '>':
+            if self.y1 > self.y:
+                self.line_collider = [(self.x - 4, self.y, self.x1 - 5, self.y1)]
+            else:
+                self.line_collider = [(self.x - 8, self.y, self.x1 - 6, self.y1)]
+        else:
+            self.line_collider = [(self.x + 4, self.y, self.x1 + 4, self.y1)]
+
+    def p_stop(self, angle):
+        shift = 0
+        self.angle = normal_angle(self.angle)
+        if self.direction == 'V':
+            if angle > 0:
+                return math.pi < self.angle < math.pi / 2 * 3
+            return math.pi * 2 > self.angle > math.pi / 2 * 3
+        if self.direction == '^':
+            if angle > 0:
+                return shift < self.angle < math.pi / 2
+            return math.pi - shift > self.angle > math.pi / 2
+        if self.direction == '>':
+            if angle > 0:
+                return math.pi / 2 + shift < self.angle < math.pi
+            return math.pi / 2 * 3 - shift > self.angle > math.pi
+        if angle > 0:
+            return math.pi / 2 * 3 + shift < self.angle < math.pi * 2
+        return math.pi / 2 - shift > self.angle > 0
+
     def move(self):
+        self.angle = normal_angle(self.angle)
         if self.open_count:
             self.open_count -= 1
             self.angle += math.pi / 2 / self.OPEN_COUNT
