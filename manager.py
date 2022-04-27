@@ -8,16 +8,11 @@ from map import world_map, map_for_lighting, light_emitter_map, foreground_world
 class Manager:
     def __init__(self, screen, player):
         self.screen = screen
-        self.door = Door(18 * 14, 18 * 39, player, math.pi)
+        self.door = Door(18 * 14, 18 * 39 + 4, player, math.pi / 2 * 3)
         self.player = player
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
-        # self.bounding_box = [*[(i * TILE, -2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
-        #                      *[(i * TILE, HEIGHT + 2 * TILE) for i in range(-2, WIDTH // TILE + 2)],
-        #                      *[(-2 * TILE, i * TILE) for i in range(-2, HEIGHT // TILE + 2)],
-        #                      *[(WIDTH + 2 * TILE, i * TILE) for i in range(-2, HEIGHT // TILE + 2)]]
-        # self.bounding_box = set(self.bounding_box)
         self.sc_middle_plan = pygame.Surface((WIDTH * 3, HEIGHT * 3), pygame.SRCALPHA)
         self.sc_middle_plan.fill((0, 0, 0, 0))
         self.sc_foreground = pygame.Surface((WIDTH * 3, HEIGHT * 3), pygame.SRCALPHA)
@@ -40,20 +35,16 @@ class Manager:
         self.sc.fill((120, 120, 120))
         self.sc_light.fill((50, 50, 50, 0))
 
-        # bounding_box = set(
-        #     ((i[0] + self.player.scroll[0]) // TILE * TILE, (i[1] + self.player.scroll[1]) // TILE * TILE)
-        #     for i in self.bounding_box)
-        # map_for_lighting_copy = map_for_lighting.copy()
-        # for i in bounding_box:
-        #     map_for_lighting_copy[i] = 1
         self.door.move()
         door_map_copy = door_map.copy()
         door_map_copy = self.door.get(door_map_copy)
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
-            if self.player.line_collider.x - LIGHT_RENDERING_RANGE[0] < i.x < self.player.line_collider.x + LIGHT_RENDERING_RANGE[0] and \
-                    self.player.line_collider.y - LIGHT_RENDERING_RANGE[1] < i.y < self.player.line_collider.y + LIGHT_RENDERING_RANGE[1]:
+            if self.player.line_collider.x - LIGHT_RENDERING_RANGE[0] < i.x < self.player.line_collider.x + \
+                    LIGHT_RENDERING_RANGE[0] and \
+                    self.player.line_collider.y - LIGHT_RENDERING_RANGE[1] < i.y < self.player.line_collider.y + \
+                    LIGHT_RENDERING_RANGE[1]:
                 intensity = 0
                 i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
                               (intensity, intensity, intensity), self.player.scroll, map_for_lighting, door_map_copy)

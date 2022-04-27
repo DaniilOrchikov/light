@@ -2,6 +2,7 @@ import math
 
 import pygame
 from numba import njit
+from settings import *
 
 
 @njit(fastmath=True, cache=True)
@@ -38,10 +39,8 @@ def line(x1, y1, x2, y2):
 
 @njit(fastmath=True, cache=True)
 def normal_angle(angle):
-    angle = round(angle, 12)
     while angle > math.pi * 2:
         angle -= math.pi * 2
-    angle = round(angle, 12)
     while angle < 0:
         angle += math.pi * 2
     angle = round(angle, 12)
@@ -74,14 +73,14 @@ class Door:
         self.light_rect = []
         for j in range(0, 2):
             self.light_rect.extend(
-                [(int(i[0] // 8) + j, int(i[1] // 8) + j) for i in
-                 line(self.x, self.y, int(self.x1), int(self.y1))])
+                [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
+                 for i in line(self.x, self.y, int(self.x1), int(self.y1))])
             self.light_rect.extend(
-                [(int(i[0] // 8), int(i[1] // 8) + j) for i in
-                 line(self.x, self.y, int(self.x1), int(self.y1))])
+                [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
+                 for i in line(self.x, self.y, int(self.x1), int(self.y1))])
             self.light_rect.extend(
-                [(int(i[0] // 8) + j, int(i[1] // 8)) for i in
-                 line(self.x, self.y, int(self.x1), int(self.y1))])
+                [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
+                 for i in line(self.x, self.y, int(self.x1), int(self.y1))])
         self.light_rect = list(set(self.light_rect))
 
         if not self.is_open or self.player_stop:
@@ -188,7 +187,6 @@ class Door:
             self.line_collider = [(self.x + 5, self.y, self.x1 + 4, self.y1)]
 
     def p_stop(self, angle):
-        shift = 0
         self.angle = normal_angle(self.angle)
         if self.direction == 'V':
             if angle > 0:
@@ -196,15 +194,15 @@ class Door:
             return math.pi * 2 > self.angle > math.pi / 2 * 3
         if self.direction == '^':
             if angle > 0:
-                return shift < self.angle < math.pi / 2
-            return math.pi - shift > self.angle > math.pi / 2
+                return 0 < self.angle < math.pi / 2
+            return math.pi + 0.1 > self.angle > math.pi / 2
         if self.direction == '>':
             if angle > 0:
-                return math.pi / 2 + shift < self.angle < math.pi
-            return math.pi / 2 * 3 - shift > self.angle > math.pi
+                return math.pi / 2 < self.angle < math.pi
+            return math.pi / 2 * 3 > self.angle > math.pi
         if angle > 0:
-            return math.pi / 2 * 3 + shift < self.angle < math.pi * 2
-        return math.pi / 2 - shift > self.angle > 0
+            return math.pi / 2 * 3 < self.angle < math.pi * 2
+        return math.pi / 2 > self.angle > 0
 
     def move(self):
         self.angle = normal_angle(self.angle)

@@ -4,8 +4,8 @@ from settings import *
 
 
 @njit(fastmath=True, cache=True)
-def mapping(a, b):
-    return int(a // TILE) * TILE, int(b // TILE) * TILE
+def mapping(a, b, average):
+    return int(a // average) * average, int(b // average) * average
 
 
 @njit(fastmath=True, cache=True)
@@ -16,7 +16,7 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
         m_d *= 2.4
         rays = [(float(player_pos[0]), float(player_pos[1]))]
     ox, oy = player_pos
-    xm, ym = mapping(ox, oy)
+    xm, ym = mapping(ox, oy, TILE)
     cur_angle = player_angle - fov / 2
     for ray in range(NUM_RAYS):
         sin_a = math.sin(cur_angle)
@@ -27,10 +27,10 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
 
         # verticals
         x, dx = (xm + TILE, 1) if cos_a >= 0 else (xm, -1)
-        for i in range(0, WIDTH * 2, 8):
+        for i in range(0, WIDTH * 2, AVERAGE):
             depth_v = (x - ox) / cos_a
             y = oy + depth_v * sin_a
-            if mapping(x + dx, y) in world_map or (int((x + dx) // 8), int(y) // 8) in door_map or \
+            if mapping(x + dx, y, TILE) in world_map or mapping(x + dx, y, AVERAGE) in door_map or \
                     math.sqrt((player_pos[0] - x - dx) ** 2 + (player_pos[1] - y) ** 2) > m_d:
                 X, Y = x + dx, y
                 break
@@ -38,12 +38,13 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
 
         # horizontals
         y, dy = (ym + TILE, 1) if sin_a >= 0 else (ym, -1)
-        for i in range(0, HEIGHT * 2, 8):
+        for i in range(0, HEIGHT * 2, AVERAGE):
             depth_h = (y - oy) / sin_a
             x = ox + depth_h * cos_a
-            if mapping(x, y + dy) in world_map or (int(x) // 8, int((y + dy) // 8)) in door_map or \
+            if mapping(x, y + dy, TILE) in world_map or mapping(x, y + dy, AVERAGE) in door_map or \
                     math.sqrt((player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2) > m_d:
-                if abs(Y - player_pos[1]) > abs(y + dy - player_pos[1]):
+                # if abs(Y - player_pos[1]) > abs(y + dy - player_pos[1]):
+                if math.sqrt((player_pos[0] - X) ** 2 + (player_pos[1] - Y) ** 2) >= math.sqrt((player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2):
                     X, Y = x, y + dy
                 break
             y += dy * TILE

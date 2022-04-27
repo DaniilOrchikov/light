@@ -40,3 +40,6 @@ DARKGRAY = (40, 40, 40)
 PURPLE = (120, 0, 120)
 SKYBLUE = (0, 186, 255)
 YELLOW = (220, 220, 0)
+
+# door
+AVERAGE = 8

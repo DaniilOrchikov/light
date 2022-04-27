@@ -15,7 +15,7 @@ class Player:
         self.x, self.y = player_pos
         self.angle = player_angle
         self.scroll = [0.0, 0.0]
-        self.size = TILE
+        self.size = TILE * 1.5
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
         self.im = pygame.Surface((self.size, self.size))
         self.im.fill((255, 0, 0))
