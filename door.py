@@ -185,7 +185,7 @@ class Door:
             else:
                 self.line_collider = [(self.x - 8, self.y, self.x1 - 6, self.y1)]
         else:
-            self.line_collider = [(self.x + 4, self.y, self.x1 + 4, self.y1)]
+            self.line_collider = [(self.x + 5, self.y, self.x1 + 4, self.y1)]
 
     def p_stop(self, angle):
         shift = 0
