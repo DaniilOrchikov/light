@@ -39,4 +39,4 @@ while 1:
     cursor.paint(*pygame.mouse.get_pos(), screen)
 
     pygame.display.flip()
-    clock.tick()
+    clock.tick(FPS)

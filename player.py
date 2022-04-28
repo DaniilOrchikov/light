@@ -1,3 +1,4 @@
+import pygame
 from numba import njit
 
 from ray_casting import ray_casting
@@ -32,19 +33,23 @@ class Player:
         self.is_move = False
         move = [0, 0]
         keys = pygame.key.get_pressed()
+        speed = player_speed if not keys[pygame.K_LSHIFT] else player_shift_speed
         if keys[pygame.K_w]:
-            move[1] += -player_speed
+            move[1] += -speed
             self.top = 'True'
         if keys[pygame.K_s]:
-            move[1] += player_speed
+            move[1] += speed
             self.top = 'False'
         if keys[pygame.K_a]:
-            move[0] += -player_speed
+            move[0] += -speed
             self.right = 'False'
         if keys[pygame.K_d]:
-            move[0] += player_speed
+            move[0] += speed
             self.right = 'True'
         self.is_move = move != [0, 0]
+        if move[0] and move[1]:
+            move[0] = move[0] + (1 if move[0] < 0 else -1)
+            move[1] = move[1] + (1 if move[1] < 0 else -1)
         self.collisions = self.physics.movement(self.rect, move, door)
         if self.collisions['door']:
             if self.is_move:

@@ -78,7 +78,7 @@ class Door:
         self.y1 = self.length * math.sin(self.angle) + self.y
         self.im = pygame.image.load('data/door.png').convert_alpha()
 
-        self.OPEN_COUNT = 30
+        self.OPEN_COUNT = 50
         self.open_count = 0
 
         self.generate()
@@ -211,6 +211,6 @@ class Door:
         self.angle = normal_angle(self.angle)
         if self.open_count:
             self.open_count -= 1
-            self.angle += math.pi / 2 / self.OPEN_COUNT
+            self.angle += math.pi / 4 / self.OPEN_COUNT
             self.push()
         self.generate()

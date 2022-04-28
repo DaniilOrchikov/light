@@ -30,6 +30,7 @@ RENDERING_RANGE = [MAX_DEPTH * 3.2, MAX_DEPTH * 2.2]
 player_pos = (200, 200)
 player_angle = 0
 player_speed = 2
+player_shift_speed = 4
 
 # colors
 WHITE = (255, 255, 255)

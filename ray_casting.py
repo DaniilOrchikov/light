@@ -11,9 +11,9 @@ def mapping(a, b, average):
 @njit(fastmath=True, cache=True)
 def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
     rays = [(0.0, 0.0)]
-    m_d = MAX_DEPTH
+    m_d = MAX_DEPTH * 1.2
     if not its_lamp:
-        m_d *= 2.4
+        m_d = MAX_DEPTH * 2.4
         rays = [(float(player_pos[0]), float(player_pos[1]))]
     ox, oy = player_pos
     xm, ym = mapping(ox, oy, TILE)
