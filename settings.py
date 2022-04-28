@@ -1,4 +1,5 @@
 import math
+import pygame
 
 # game settings
 WIDTH = 990 * 1200 // 990

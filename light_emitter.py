@@ -1,8 +1,3 @@
-import time
-
-import numpy as np
-import pygame
-
 from ray_casting import ray_casting
 from settings import *
 

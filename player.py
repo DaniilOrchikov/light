@@ -2,7 +2,6 @@ from numba import njit
 
 from ray_casting import ray_casting
 from settings import *
-import pygame
 
 
 @njit(fastmath=True, cache=True)

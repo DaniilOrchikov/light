@@ -1,7 +1,6 @@
 from os import listdir
 from random import randrange, randint
 
-import pygame
 from settings import *
 
 

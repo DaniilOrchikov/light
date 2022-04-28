@@ -1,5 +1,4 @@
 import sys
-import pygame
 
 from cursor import Cursor
 from settings import *
