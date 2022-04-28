@@ -6,8 +6,7 @@ from map import world_map, map_for_lighting, light_emitter_map, foreground_world
 class Manager:
     def __init__(self, screen, player):
         self.screen = screen
-        self.doors = [Door(18 * 14, 18 * 39, player, math.pi / 2 * 3),
-                      Door(18 * 14, 18 * 39 + 8, player, math.pi / 2)]
+        self.doors = [Door(18 * 15, 18 * 35, player, math.pi)]
         self.player = player
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -36,15 +35,19 @@ class Manager:
 
         door_map_copy = door_map.copy()
         for door in self.doors:
-            door.move()
-            door_map_copy = door.get(door_map_copy)
+            if self.player.rect.x - RENDERING_RANGE[0] < door.x < self.player.rect.x + \
+                    RENDERING_RANGE[0] and \
+                    self.player.rect.y - RENDERING_RANGE[1] < door.y < self.player.rect.y + \
+                    RENDERING_RANGE[1]:
+                door.move()
+                door_map_copy = door.get(door_map_copy)
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
-            if self.player.line_collider.x - LIGHT_RENDERING_RANGE[0] < i.x < self.player.line_collider.x + \
-                    LIGHT_RENDERING_RANGE[0] and \
-                    self.player.line_collider.y - LIGHT_RENDERING_RANGE[1] < i.y < self.player.line_collider.y + \
-                    LIGHT_RENDERING_RANGE[1]:
+            if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + \
+                    RENDERING_RANGE[0] and \
+                    self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + \
+                    RENDERING_RANGE[1]:
                 intensity = 0
                 i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
                               (intensity, intensity, intensity), self.player.scroll, map_for_lighting, door_map_copy)

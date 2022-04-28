@@ -24,7 +24,7 @@ for j, row in enumerate(txt_map):
             map_for_lighting[(i * TILE, j * TILE)] = 1
         elif char == 'o':
             world_map.add(Window(i * TILE, j * TILE))
-            physics_world_map[-1].append(None)
+            physics_world_map[-1].append(Window(i * TILE, j * TILE))
         elif char == 'l':
             light_emitter_map.add(LightEmitter(i * TILE, j * TILE))
             physics_world_map[-1].append(None)

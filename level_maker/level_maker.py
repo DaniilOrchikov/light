@@ -101,8 +101,8 @@ class LevelMaker:
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED | pygame.FULLSCREEN)
-width, height = 100, 100
-cell_size = 6
+width, height = 70, 100
+cell_size = 9
 maker = LevelMaker(width, height, cell_size)
 
 clock = pygame.time.Clock()

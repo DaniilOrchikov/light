@@ -3,6 +3,22 @@ from settings import *
 
 
 @njit(fastmath=True, cache=True)
+def generate_light_rect(x, y, x1, y1):
+    light_rect = []
+    for j in range(0, 2):
+        light_rect.extend(
+            [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
+             for i in line(x, y, int(x1), int(y1))])
+        light_rect.extend(
+            [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
+             for i in line(x, y, int(x1), int(y1))])
+        light_rect.extend(
+            [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
+             for i in line(x, y, int(x1), int(y1))])
+    return list(set(light_rect))
+
+
+@njit(fastmath=True, cache=True)
 def line(x1, y1, x2, y2):
     arr = []
     dx, dy = x2 - x1, y2 - y1
@@ -55,31 +71,20 @@ class Door:
         self.x, self.y = x, y
         self.ANGLE = normal_angle(direction)
         self.angle = self.ANGLE
-        self.length = 18 * 4
+        self.length = 18 * 4 + 16
         self.m = True
         self.is_open = False
         self.x1 = self.length * math.cos(self.angle) + self.x
         self.y1 = self.length * math.sin(self.angle) + self.y
         self.im = pygame.image.load('data/door.png').convert_alpha()
 
-        self.OPEN_COUNT = 60
+        self.OPEN_COUNT = 30
         self.open_count = 0
 
         self.generate()
 
     def generate(self):
-        self.light_rect = []
-        for j in range(0, 2):
-            self.light_rect.extend(
-                [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
-                 for i in line(self.x, self.y, int(self.x1), int(self.y1))])
-            self.light_rect.extend(
-                [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
-                 for i in line(self.x, self.y, int(self.x1), int(self.y1))])
-            self.light_rect.extend(
-                [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
-                 for i in line(self.x, self.y, int(self.x1), int(self.y1))])
-        self.light_rect = list(set(self.light_rect))
+        self.light_rect = generate_light_rect(self.x, self.y, self.x1, self.y1)
 
         if not self.is_open or self.player_stop:
             self.get_rect()
@@ -97,17 +102,10 @@ class Door:
         return arr
 
     def paint(self, sc, scroll):
-        # for i in self.light_rect:
-        #     pygame.draw.rect(sc, 'red', (i[0] * 8 - scroll[0], i[1] * 8 - scroll[1], 8, 8))
-        # pygame.draw.line(sc, 'red', (self.line_collider[0] - scroll[0], self.line_collider[1] - scroll[1]),
-        #                  (self.line_collider[2] - scroll[0], self.line_collider[3] - scroll[1]), 20)
         im = pygame.transform.rotate(self.im, math.degrees(self.angle) * -1)
         sc.blit(im, (self.x - scroll[0] - im.get_width() // 2, self.y - scroll[1] - im.get_height() // 2))
         # for i in self.line_collider:
         #     pygame.draw.line(sc, 'red', (i[0] - scroll[0], i[1] - scroll[1]), (i[2] - scroll[0], i[3] - scroll[1]))
-        # if self.rect:
-        #     pygame.draw.rect(sc, 'blue', (self.rect[0] - scroll[0], self.rect[1] - scroll[1],
-        #                                   self.rect[2], self.rect[3]))
 
     def open(self):
         self.is_open = True
@@ -115,9 +113,11 @@ class Door:
         self.push()
 
     def close(self):
-        self.is_open = False
-        self.angle = self.ANGLE
-        self.push()
+        if self.open_count < self.OPEN_COUNT / 4:
+            self.open_count = 0
+            self.is_open = False
+            self.angle = self.ANGLE
+            self.push()
 
     def push(self, right='None', top='None'):
         speed = 0.1

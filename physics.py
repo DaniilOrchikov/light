@@ -32,17 +32,18 @@ def roll(a, b, dx=1, dy=1):
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
 
+def collision_test(rect, map):
+    for tile in map:
+        if tile is not None:
+            if tile.rect.colliderect(rect):
+                return tile
+    return None
+
+
 class Physics:
     def __init__(self, map):
         map = np.array([np.array(i, dtype=object) for i in map])
         self.map = roll(np.array(map, dtype=object), np.array([[0 for _ in range(4)] for _ in range(4)]))
-
-    def collision_test(self, rect, map):
-        for tile in map:
-            if tile is not None:
-                if tile.rect.colliderect(rect):
-                    return tile
-        return None
 
     def movement(self, rect, move, doors):
         collisions = {'right': False, 'left': False, 'top': False, 'bottom': False, 'door': False}
@@ -53,7 +54,7 @@ class Physics:
                 map.append(door)
         if move[0] != 0:
             rect.x += move[0]
-            collision_tile = self.collision_test(rect, map)
+            collision_tile = collision_test(rect, map)
             if collision_tile:
                 if move[0] > 0:
                     collisions['right'] = True
@@ -63,7 +64,7 @@ class Physics:
                     rect.left = collision_tile.rect.right
         if move[1] != 0:
             rect.y += move[1]
-            collision_tile = self.collision_test(rect, map)
+            collision_tile = collision_test(rect, map)
             if collision_tile:
                 if move[1] > 0:
                     collisions['bottom'] = True
@@ -72,8 +73,7 @@ class Physics:
                     collisions['top'] = True
                     rect.top = collision_tile.rect.bottom
         for door in doors:
-            door_rect = door.line_collider
-            door_col = door_collision((rect[0], rect[1], rect[2], rect[3]), door_rect)
+            door_col = door_collision((rect[0], rect[1], rect[2], rect[3]), door.line_collider)
             if door_col:
                 collisions['door'] = door
                 break

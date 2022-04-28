@@ -43,8 +43,8 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
             x = ox + depth_h * cos_a
             if mapping(x, y + dy, TILE) in world_map or mapping(x, y + dy, AVERAGE) in door_map or \
                     math.sqrt((player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2) > m_d:
-                # if abs(Y - player_pos[1]) > abs(y + dy - player_pos[1]):
-                if math.sqrt((player_pos[0] - X) ** 2 + (player_pos[1] - Y) ** 2) >= math.sqrt((player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2):
+                if math.sqrt((player_pos[0] - X) ** 2 + (player_pos[1] - Y) ** 2) >= math.sqrt(
+                        (player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2):
                     X, Y = x, y + dy
                 break
             y += dy * TILE

@@ -19,23 +19,23 @@ pygame.mouse.set_visible(False)
 cursor = Cursor()
 
 while 1:
-    for event in pygame.event.get():
+    events = pygame.event.get()
+    for event in events:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_e:
-                for door in manager.doors:
-                    if door.is_open:
-                        door.close()
-                    else:
-                        door.open()
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
     player.movement(manager.doors)
     screen.fill((80, 80, 255))
 
     manager.paint()
     manager.fps(clock)
 
+    cursor.event_controller(events, manager.doors, player.scroll)
     cursor.paint(*pygame.mouse.get_pos(), screen)
 
     pygame.display.flip()

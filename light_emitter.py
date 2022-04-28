@@ -22,5 +22,4 @@ class LightEmitter:
                                  self.y - scroll[1] - self.light_im.get_height() // 2 + TILE // 2))
 
     def paint(self, screen):
-
         screen.blit(self.im, (self.x, self.y))
