@@ -44,12 +44,13 @@ class Physics:
                     return tile
         return None
 
-    def movement(self, rect, move, door):
+    def movement(self, rect, move, doors):
         collisions = {'right': False, 'left': False, 'top': False, 'bottom': False, 'door': False}
         map = []
         [map.extend([j for j in i if j is not None]) for i in self.map[rect.y // TILE - 1, rect.x // TILE - 1]]
-        if door.rect is not None:
-            map.append(door)
+        for door in doors:
+            if door.rect is not None:
+                map.append(door)
         if move[0] != 0:
             rect.x += move[0]
             collision_tile = self.collision_test(rect, map)
@@ -70,15 +71,10 @@ class Physics:
                 else:
                     collisions['top'] = True
                     rect.top = collision_tile.rect.bottom
-        door_rect = door.line_collider
-        door_col = door_collision((rect[0], rect[1], rect[2], rect[3]), door_rect)
-        if door_col:
-            if door_col[0] == rect[0] and door_col[1] == rect[1]:
-                collisions['door'] = 'top'
-            elif door_col[0] == rect[0] + rect[2] and door_col[1] == rect[1]:
-                collisions['door'] = 'right'
-            elif door_col[0] == rect[0] + rect[2] and door_col[1] == rect[1] + rect[3]:
-                collisions['door'] = 'bottom'
-            else:
-                collisions['door'] = 'left'
+        for door in doors:
+            door_rect = door.line_collider
+            door_col = door_collision((rect[0], rect[1], rect[2], rect[3]), door_rect)
+            if door_col:
+                collisions['door'] = door
+                break
         return collisions

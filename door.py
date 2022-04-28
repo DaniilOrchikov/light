@@ -101,10 +101,7 @@ class Door:
         #     pygame.draw.rect(sc, 'red', (i[0] * 8 - scroll[0], i[1] * 8 - scroll[1], 8, 8))
         # pygame.draw.line(sc, 'red', (self.line_collider[0] - scroll[0], self.line_collider[1] - scroll[1]),
         #                  (self.line_collider[2] - scroll[0], self.line_collider[3] - scroll[1]), 20)
-        if self.angle != self.ANGLE:
-            im = pygame.transform.rotate(self.im, math.degrees(self.angle) * -1)
-        else:
-            im = self.im.copy()
+        im = pygame.transform.rotate(self.im, math.degrees(self.angle) * -1)
         sc.blit(im, (self.x - scroll[0] - im.get_width() // 2, self.y - scroll[1] - im.get_height() // 2))
         # for i in self.line_collider:
         #     pygame.draw.line(sc, 'red', (i[0] - scroll[0], i[1] - scroll[1]), (i[2] - scroll[0], i[3] - scroll[1]))

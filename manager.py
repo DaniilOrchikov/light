@@ -6,7 +6,8 @@ from map import world_map, map_for_lighting, light_emitter_map, foreground_world
 class Manager:
     def __init__(self, screen, player):
         self.screen = screen
-        self.door = Door(18 * 14, 18 * 39, player, math.pi / 2 * 3)
+        self.doors = [Door(18 * 14, 18 * 39, player, math.pi / 2 * 3),
+                      Door(18 * 14, 18 * 39 + 8, player, math.pi / 2)]
         self.player = player
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -33,9 +34,10 @@ class Manager:
         self.sc.fill((120, 120, 120))
         self.sc_light.fill((50, 50, 50, 0))
 
-        self.door.move()
         door_map_copy = door_map.copy()
-        door_map_copy = self.door.get(door_map_copy)
+        for door in self.doors:
+            door.move()
+            door_map_copy = door.get(door_map_copy)
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
@@ -54,4 +56,5 @@ class Manager:
         self.player.paint(self.sc)
         self.sc.blit(self.sc_foreground, (-self.player.scroll[0], -self.player.scroll[1]))
         self.screen.blit(self.sc, (0, 0))
-        self.door.paint(self.screen, self.player.scroll)
+        for door in self.doors:
+            door.paint(self.screen, self.player.scroll)

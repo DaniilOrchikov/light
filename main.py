@@ -25,11 +25,12 @@ while 1:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
-                if manager.door.is_open:
-                    manager.door.close()
-                else:
-                    manager.door.open()
-    player.movement(manager.door)
+                for door in manager.doors:
+                    if door.is_open:
+                        door.close()
+                    else:
+                        door.open()
+    player.movement(manager.doors)
     screen.fill((80, 80, 255))
 
     manager.paint()
