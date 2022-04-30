@@ -47,7 +47,7 @@ class Player:
             move[0] += speed
             self.right = 'True'
         self.is_move = move != [0, 0]
-        if move[0] and move[1]:
+        if move[0] and move[1] and keys[pygame.K_LSHIFT]:
             move[0] = move[0] + (1 if move[0] < 0 else -1)
             move[1] = move[1] + (1 if move[1] < 0 else -1)
         self.collisions = self.physics.movement(self.rect, move, door)

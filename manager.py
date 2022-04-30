@@ -35,19 +35,15 @@ class Manager:
 
         door_map_copy = door_map.copy()
         for door in self.doors:
-            if self.player.rect.x - RENDERING_RANGE[0] < door.x < self.player.rect.x + \
-                    RENDERING_RANGE[0] and \
-                    self.player.rect.y - RENDERING_RANGE[1] < door.y < self.player.rect.y + \
-                    RENDERING_RANGE[1]:
+            if self.player.rect.x - RENDERING_RANGE[0] < door.x < self.player.rect.x + RENDERING_RANGE[0] and \
+                    self.player.rect.y - RENDERING_RANGE[1] < door.y < self.player.rect.y + RENDERING_RANGE[1]:
                 door.move()
                 door_map_copy = door.get(door_map_copy)
         self.sc_light_emitter1.fill((40, 40, 40))
         self.sc_light_emitter.fill((50, 50, 50))
         for i in light_emitter_map:
-            if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + \
-                    RENDERING_RANGE[0] and \
-                    self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + \
-                    RENDERING_RANGE[1]:
+            if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
+                    self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + RENDERING_RANGE[1]:
                 intensity = 0
                 i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
                               (intensity, intensity, intensity), self.player.scroll, map_for_lighting, door_map_copy)
