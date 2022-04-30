@@ -1,4 +1,3 @@
-import pygame
 from numba import njit
 
 from ray_casting import ray_casting

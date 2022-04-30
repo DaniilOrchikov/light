@@ -1,5 +1,6 @@
 import math
 import pygame
+from random import randint
 
 # game settings
 WIDTH = 990 * 1200 // 990
@@ -18,13 +19,13 @@ MAP_POS = (0, HEIGHT - HEIGHT // MAP_SCALE)
 # ray casting settings
 FOV = math.pi / 3
 HALF_FOV = FOV / 2
-NUM_RAYS = 300
+NUM_RAYS = 200
 MAX_DEPTH = 300
 DELTA_ANGLE = FOV / NUM_RAYS
 DIST = NUM_RAYS / (2 * math.tan(HALF_FOV))
 PROJ_COEFF = DIST * TILE
 SCALE = WIDTH // NUM_RAYS
-RENDERING_RANGE = [MAX_DEPTH * 3.2, MAX_DEPTH * 2.2]
+RENDERING_RANGE = [MAX_DEPTH * 3.3, MAX_DEPTH * 2.4]
 
 # player settings
 player_pos = (200, 200)
@@ -45,3 +46,5 @@ YELLOW = (220, 220, 0)
 
 # door
 AVERAGE = 8
+DOOR_PUSHING_ANGLE = 0.1
+DOOR_PUSHING_ANGLE_SHIFT = 0.2

@@ -1,11 +1,12 @@
 import sys
 
+import numpy as np
 import pygame
 from settings import *
 
 
 class LevelMaker:
-    def __init__(self, width, height, cell_size):
+    def __init__(self, width, height, cell_size, map=None):
         self.width = width
         self.height = height
         self.cell_size = cell_size
@@ -14,14 +15,19 @@ class LevelMaker:
         self.top = self.cell_size * 2
         self.indent = self.cell_size // 3
         self.brush = 'w'
-        self.board = [['.' for _ in range(self.width)] for _ in range(self.height)]
+        if map is None:
+            self.board = [['.' for _ in range(self.width)] for _ in range(self.height)]
+        else:
+            self.board = map
         self.im_board = {'.': pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA),
                          'w': pygame.image.load('../data/tiles/wall.png').convert_alpha(),
-                         'l': pygame.image.load('../data/tiles/lamp.png').convert_alpha()}
+                         'l': pygame.image.load('../data/tiles/lamp.png').convert_alpha(),
+                         'o': pygame.image.load('../data/tiles/window.png').convert_alpha()}
         self.im_board1 = [[pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA),
                            pygame.image.load('../data/tiles/wall.png').convert_alpha(),
-                           pygame.image.load('../data/tiles/lamp.png').convert_alpha()]]
-        self.tile_board = [['.', 'w', 'l', '', ''],
+                           pygame.image.load('../data/tiles/lamp.png').convert_alpha(),
+                           pygame.image.load('../data/tiles/window.png').convert_alpha()]]
+        self.tile_board = [['.', 'w', 'l', 'o', ''],
                            ['', '', '', '', ''],
                            ['', '', '', '', ''],
                            ['', '', '', '', ''],
@@ -80,9 +86,10 @@ class LevelMaker:
             except IndexError:
                 pass
 
-    def get(self):
+    def save(self):
         with open('map1.txt', 'w') as map:
-            board = '\n'.join([''.join(self.board[i]) for i in range(self.height)])
+            board = np.fliplr(np.rot90(self.board, 3))
+            board = '\n'.join([''.join(board[i]) for i in range(self.width)])
             print(board, file=map)
 
     def rect(self, pos1, pos2):
@@ -103,7 +110,11 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED | pygame.FULLSCREEN)
 width, height = 70, 100
 cell_size = 9
-maker = LevelMaker(width, height, cell_size)
+if True:
+    with open('../map.txt', 'r') as txt_map:
+        txt_map = [list(i) for i in txt_map.read().split('\n')]
+        width, height = len(txt_map[0]), len(txt_map)
+maker = LevelMaker(width, height, cell_size, txt_map)
 
 clock = pygame.time.Clock()
 
@@ -123,7 +134,7 @@ while True:
             maker.mouse_event(pygame.mouse.get_pos())
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_s:
-                maker.get()
+                maker.save()
                 print(1)
             elif event.key == pygame.K_ESCAPE:
                 pygame.quit()

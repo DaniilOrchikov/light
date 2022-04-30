@@ -8,7 +8,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED | pygame.FULLSCR
 
 from physics import Physics
 from player import Player
-from map import physics_world_map
+from map import physics_world_map, light_emitter_map
 from manager import Manager
 
 clock = pygame.time.Clock()
@@ -18,7 +18,7 @@ manager = Manager(screen, player)
 pygame.mouse.set_visible(False)
 cursor = Cursor()
 
-while 1:
+while True:
     events = pygame.event.get()
     for event in events:
         if event.type == pygame.QUIT:
@@ -35,7 +35,7 @@ while 1:
     manager.paint()
     manager.fps(clock)
 
-    cursor.event_controller(events, manager.doors, player.scroll)
+    cursor.event_controller(events, manager.doors, light_emitter_map, player.scroll)
     cursor.paint(*pygame.mouse.get_pos(), screen)
 
     pygame.display.flip()

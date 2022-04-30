@@ -56,17 +56,17 @@ def normal_angle(angle):
         angle -= math.pi * 2
     while angle < 0:
         angle += math.pi * 2
-    angle = round(angle, 12)
+    angle = round(angle, 3)
     return angle
 
 
 class Door:
-    def __init__(self, x, y, player, direction):
+    def __init__(self, x, y, direction):
         self.direction = {math.pi: '<', 0: '>', math.pi / 2: 'V', math.pi / 2 * 3: '^'}[direction]
         self.rect = None
         self.player_stop = False
         self.line_collider = None
-        self.player = player
+        self.player = None
         self.light_rect = None
         self.x, self.y = x, y
         self.ANGLE = normal_angle(direction)
@@ -82,6 +82,9 @@ class Door:
         self.open_count = 0
 
         self.generate()
+
+    def add_player(self, player):
+        self.player = player
 
     def generate(self):
         self.light_rect = generate_light_rect(self.x, self.y, self.x1, self.y1)
@@ -120,7 +123,8 @@ class Door:
             self.push()
 
     def push(self, right='None', top='None'):
-        speed = 0.1
+        keys = pygame.key.get_pressed()
+        speed = DOOR_PUSHING_ANGLE if not keys[pygame.K_LSHIFT] else DOOR_PUSHING_ANGLE_SHIFT
         self.angle = normal_angle(self.angle)
         if right != 'None' or top != 'None':
             self.open_count = 0

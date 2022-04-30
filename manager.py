@@ -1,13 +1,14 @@
-from door import Door
 from settings import *
-from map import world_map, map_for_lighting, light_emitter_map, foreground_world_map, door_map
+from map import world_map, map_for_lighting, light_emitter_map, foreground_world_map, door_map, doors
 
 
 class Manager:
     def __init__(self, screen, player):
         self.screen = screen
-        self.doors = [Door(18 * 15, 18 * 35, player, math.pi)]
         self.player = player
+        self.doors = doors
+        for i in self.doors:
+            i.add_player(self.player)
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
@@ -44,9 +45,8 @@ class Manager:
         for i in light_emitter_map:
             if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
                     self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + RENDERING_RANGE[1]:
-                intensity = 0
-                i.paint_light(self.sc_light_emitter, self.sc_light_emitter1,
-                              (intensity, intensity, intensity), self.player.scroll, map_for_lighting, door_map_copy)
+                i.paint_light(self.sc_light_emitter, self.sc_light_emitter1, (0, 0, 0),
+                              self.player.scroll, map_for_lighting, door_map_copy)
         self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
