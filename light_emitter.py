@@ -1,3 +1,5 @@
+import pygame.draw
+
 from ray_casting import ray_casting
 from settings import *
 

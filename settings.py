@@ -11,24 +11,15 @@ FPS = 60
 TILE = 18
 FPS_POS = (WIDTH - 65, 5)
 
-# minimap settings
-MAP_SCALE = 5
-MAP_TILE = TILE // MAP_SCALE
-MAP_POS = (0, HEIGHT - HEIGHT // MAP_SCALE)
-
 # ray casting settings
 FOV = math.pi / 3
 HALF_FOV = FOV / 2
-NUM_RAYS = 200
+NUM_RAYS = 150
 MAX_DEPTH = 300
-DELTA_ANGLE = FOV / NUM_RAYS
-DIST = NUM_RAYS / (2 * math.tan(HALF_FOV))
-PROJ_COEFF = DIST * TILE
-SCALE = WIDTH // NUM_RAYS
 RENDERING_RANGE = [MAX_DEPTH * 3.3, MAX_DEPTH * 2.4]
 
 # player settings
-player_pos = (200, 200)
+player_pos = (100, 100)
 player_angle = 0
 player_speed = 2
 player_shift_speed = 4
@@ -45,6 +36,6 @@ SKYBLUE = (0, 186, 255)
 YELLOW = (220, 220, 0)
 
 # door
-AVERAGE = 8
+AVERAGE = TILE // 2
 DOOR_PUSHING_ANGLE = 0.1
 DOOR_PUSHING_ANGLE_SHIFT = 0.2

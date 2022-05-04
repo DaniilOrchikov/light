@@ -5,16 +5,19 @@ from settings import *
 @njit(fastmath=True, cache=True)
 def generate_light_rect(x, y, x1, y1):
     light_rect = []
-    for j in range(0, 2):
-        light_rect.extend(
-            [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
-             for i in line(x, y, int(x1), int(y1))])
-        light_rect.extend(
-            [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
-             for i in line(x, y, int(x1), int(y1))])
-        light_rect.extend(
-            [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
-             for i in line(x, y, int(x1), int(y1))])
+    light_rect.extend(
+        [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
+         for i in line(x, y, int(x1), int(y1))])
+    # for j in range(0, 2):
+    #     light_rect.extend(
+    #         [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
+    #          for i in line(x, y, int(x1), int(y1))])
+    #     light_rect.extend(
+    #         [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
+    #          for i in line(x, y, int(x1), int(y1))])
+    #     light_rect.extend(
+    #         [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
+    #          for i in line(x, y, int(x1), int(y1))])
     return list(set(light_rect))
 
 
@@ -62,6 +65,8 @@ def normal_angle(angle):
 
 class Door:
     def __init__(self, x, y, direction):
+        x = x // AVERAGE * AVERAGE
+        y = y // AVERAGE * AVERAGE
         self.direction = {math.pi: '<', 0: '>', math.pi / 2: 'V', math.pi / 2 * 3: '^'}[direction]
         self.rect = None
         self.player_stop = False

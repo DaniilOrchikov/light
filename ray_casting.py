@@ -13,7 +13,7 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
     rays = [(0.0, 0.0)]
     m_d = MAX_DEPTH * 1.2
     if not its_lamp:
-        m_d = MAX_DEPTH * 2.4
+        m_d = MAX_DEPTH * 1.9
         rays = [(float(player_pos[0]), float(player_pos[1]))]
     ox, oy = player_pos
     xm, ym = mapping(ox, oy, TILE)
@@ -34,7 +34,7 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
                     math.sqrt((player_pos[0] - x - dx) ** 2 + (player_pos[1] - y) ** 2) > m_d:
                 X, Y = x + dx, y
                 break
-            x += dx * TILE
+            x += dx * AVERAGE
 
         # horizontals
         y, dy = (ym + TILE, 1) if sin_a >= 0 else (ym, -1)
@@ -47,7 +47,7 @@ def ray_casting(player_pos, player_angle, fov, its_lamp, world_map, door_map):
                         (player_pos[0] - x) ** 2 + (player_pos[1] - y - dy) ** 2):
                     X, Y = x, y + dy
                 break
-            y += dy * TILE
+            y += dy * AVERAGE
 
         if X >= 0 and Y >= 0:
             if math.sqrt((player_pos[0] - X) ** 2 + (player_pos[1] - Y) ** 2) > m_d:
