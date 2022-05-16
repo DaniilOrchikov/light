@@ -1,18 +1,17 @@
 import sys
 
-from cursor import Cursor
 from settings import *
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED | pygame.FULLSCREEN | pygame.DOUBLEBUF)
 
+from cursor import Cursor
 from physics import Physics
 from player import Player
-from map import physics_world_map, light_emitter_map
 from manager import Manager
 
 clock = pygame.time.Clock()
-physics = Physics(physics_world_map)
+physics = Physics()
 player = Player(physics)
 manager = Manager(screen, player)
 pygame.mouse.set_visible(False)
@@ -35,7 +34,7 @@ while True:
     manager.paint()
     manager.fps(clock)
 
-    cursor.event_controller(events, manager.doors, light_emitter_map, player.scroll)
+    cursor.event_controller(events, manager.doors, player.scroll)
     cursor.paint(*pygame.mouse.get_pos(), screen)
 
     pygame.display.flip()

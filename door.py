@@ -137,7 +137,7 @@ class Door:
             angle = 0
             if 0 <= self.angle < math.pi / 2 and (top == 'False' or right == 'False'):
                 angle += speed
-            elif 0 < self.angle <= math.pi / 2 and (top == 'True' or right == 'True'):
+            elif 0 <= self.angle <= math.pi / 2 and (top == 'True' or right == 'True'):
                 angle -= speed
             elif math.pi / 2 <= self.angle < math.pi and (right == 'False' or top == 'True'):
                 angle += speed

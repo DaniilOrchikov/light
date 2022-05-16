@@ -1,5 +1,6 @@
 import numpy as np
 
+from map import physics_world_map
 from settings import *
 
 
@@ -41,20 +42,22 @@ def collision_test(rect, map):
 
 
 class Physics:
-    def __init__(self, map):
-        map = np.array([np.array(i, dtype=object) for i in map])
-        self.map = roll(np.array(map, dtype=object), np.array([[0 for _ in range(4)] for _ in range(4)]))
+    def __init__(self):
+        physics_map = np.array([np.array(i, dtype=object) for i in physics_world_map])
+        self.physics_map = roll(np.array(physics_map, dtype=object),
+                                np.array([[0 for _ in range(4)] for _ in range(4)]))
 
     def movement(self, rect, move, doors):
         collisions = {'right': False, 'left': False, 'top': False, 'bottom': False, 'door': False}
-        map = []
-        [map.extend([j for j in i if j is not None]) for i in self.map[rect.y // TILE - 1, rect.x // TILE - 1]]
+        physics_map = []
+        [physics_map.extend([j for j in i if j is not None]) for i in
+         self.physics_map[rect.y // TILE - 1, rect.x // TILE - 1]]
         for door in doors:
             if door.rect is not None:
-                map.append(door)
+                physics_map.append(door)
         if move[0] != 0:
             rect.x += move[0]
-            collision_tile = collision_test(rect, map)
+            collision_tile = collision_test(rect, physics_map)
             if collision_tile:
                 if move[0] > 0:
                     collisions['right'] = True
@@ -64,7 +67,7 @@ class Physics:
                     rect.left = collision_tile.rect.right
         if move[1] != 0:
             rect.y += move[1]
-            collision_tile = collision_test(rect, map)
+            collision_tile = collision_test(rect, physics_map)
             if collision_tile:
                 if move[1] > 0:
                     collisions['bottom'] = True

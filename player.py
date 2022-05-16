@@ -1,6 +1,7 @@
+import pygame.draw
 from numba import njit
 
-from ray_casting import ray_casting
+from ray_casting import calculating_lightning
 from settings import *
 
 
@@ -62,7 +63,7 @@ class Player:
         self.scroll[1] += round((self.rect.y - self.scroll[1] - HALF_HEIGHT) / 10, 2)
 
     def paint_light(self, sc_light, world_map, door_map):
-        rays = ray_casting(self.pos, self.angle, FOV, False, world_map, door_map)
+        rays = calculating_lightning(self.pos, self.angle, FOV, False, world_map, door_map, self.rect.y)
         rays = [(i[0] - self.scroll[0], i[1] - self.scroll[1]) for i in rays]
         try:
             pygame.draw.polygon(sc_light, (234, 224, 191, 100), rays)

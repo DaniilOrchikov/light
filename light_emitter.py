@@ -1,6 +1,6 @@
 import pygame.draw
 
-from ray_casting import ray_casting
+from ray_casting import calculating_lightning
 from settings import *
 
 
@@ -21,11 +21,12 @@ class LightEmitter:
         self.on = not self.on
         self.turn_on_time = self.TURN_ON_TIME
 
-    def paint_light(self, sc, sc1, intensity, scroll, world_map, door_map):
+    def paint_light(self, sc, sc1, intensity, scroll, world_map, door_map, player_pos_y):
         if self.turn_on_time:
             self.turn_on_time -= 1
         if self.on and self.turn_on_time % randint(2, 7) == 0:
-            rays = ray_casting((self.x + TILE // 2, self.y + TILE // 2), 0, math.pi * 2, True, world_map, door_map)[1:]
+            rays = calculating_lightning((self.x + TILE // 2, self.y + TILE // 2), 0, math.pi * 2, True, world_map,
+                                         door_map, player_pos_y)[1:]
             rays = [(i[0] - scroll[0], i[1] - scroll[1]) for i in rays]
             try:
                 pygame.draw.polygon(sc, intensity, rays)

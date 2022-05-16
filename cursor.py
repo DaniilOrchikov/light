@@ -1,5 +1,6 @@
 import pygame.image
 
+from map import light_emitter_map
 from physics import door_collision
 
 
@@ -8,7 +9,7 @@ class Cursor:
         self.im = pygame.image.load('data/icons/cursor.png').convert_alpha()
         self.rect = pygame.Rect(*[i - 8 for i in pygame.mouse.get_pos()], 16, 16)
 
-    def event_controller(self, event, doors, lamps, scroll):
+    def event_controller(self, event, doors, scroll):
         self.rect = pygame.Rect(*[i - 8 for i in pygame.mouse.get_pos()], 16, 16)
         self.rect[0] += scroll[0]
         self.rect[1] += scroll[1]
@@ -23,7 +24,7 @@ class Cursor:
             else:
                 collide_door.open()
         collide_lamp = None
-        for lamp in lamps:
+        for lamp in light_emitter_map:
             if self.rect.colliderect(lamp.rect):
                 collide_lamp = lamp
                 break

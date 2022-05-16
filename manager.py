@@ -46,7 +46,7 @@ class Manager:
             if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
                     self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + RENDERING_RANGE[1]:
                 i.paint_light(self.sc_light_emitter, self.sc_light_emitter1, (0, 0, 0),
-                              self.player.scroll, map_for_lighting, door_map_copy)
+                              self.player.scroll, map_for_lighting, door_map_copy, self.player.rect.y)
         self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
