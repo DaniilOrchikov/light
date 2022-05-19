@@ -1,4 +1,5 @@
 import sys
+
 from settings import *
 
 pygame.init()
@@ -15,6 +16,7 @@ player = Player(physics)
 manager = Manager(screen, player)
 pygame.mouse.set_visible(False)
 cursor = Cursor()
+sunlight_intensity = 0
 
 while True:
     events = pygame.event.get()
@@ -27,9 +29,15 @@ while True:
                 pygame.quit()
                 sys.exit()
 
-    player.movement(manager.doors)
+    if pygame.key.get_pressed()[pygame.K_PAGEUP]:
+        if sunlight_intensity < 90:
+            sunlight_intensity += 1
+    elif pygame.key.get_pressed()[pygame.K_PAGEDOWN]:
+        if sunlight_intensity > 0:
+            sunlight_intensity -= 1
 
-    manager.paint()
+    player.movement(manager.doors)
+    manager.paint(sunlight_intensity)
     manager.fps(clock)
 
     cursor.event_controller(events, manager.doors, player.scroll)

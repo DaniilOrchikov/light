@@ -1,3 +1,6 @@
+import time
+from math import sin
+
 from level import create_level
 from settings import *
 from map import *
@@ -21,6 +24,8 @@ class Manager:
         self.sc_lamp.fill((0, 0, 0, 0))
         self.sc_foreground = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
         self.sc_foreground.fill((0, 0, 0, 0))
+        self.sky_screen = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        self.sky_screen.fill((0, 0, 0, 0))
         for tile in background_map_l1:
             tile.paint(self.sc_background)
         for tile in background_map_l2:
@@ -38,11 +43,12 @@ class Manager:
         render = self.font.render(display_fps, False, RED)
         self.screen.blit(render, FPS_POS)
 
-    def paint(self):
+    def paint(self, sunlight_intensity):
         color_shift = 0
         self.sc.fill((144 + color_shift, 144 + color_shift, 144 + color_shift))
         self.sc_light.fill((50, 50, 50, 0))
         self.sc_lamp.fill((0, 0, 0, 0))
+        self.sky_screen.fill((0, 0, 0, 0))
 
         door_map_copy = door_map.copy()
         for door in self.doors:
@@ -58,11 +64,16 @@ class Manager:
                 i.paint(self.sc_light_emitter, self.sc_light_emitter1, (0, 0, 0),
                         self.player.scroll, map_for_lighting, door_map_copy, self.player.rect.y, self.sc_lamp)
         self.sc.blit(self.sc_background, (-self.player.scroll[0], -self.player.scroll[1]))
-        self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+
+        self.sky_screen.fill((0, 0, 0, 90 - sunlight_intensity))
+        self.sc.blit(self.sky_screen, (0, 0))
+
+        self.player.paint_light(self.sc_light_emitter, map_for_lighting, door_map_copy)
+        self.sc.blit(self.sc_light_emitter1, (0, 0),
+                     special_flags=pygame.BLEND_RGBA_SUB)  # это отрисовывается ореол света рядом с лампой
         self.sc.blit(self.sc_lamp, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-        self.player.paint_light(self.sc_light, map_for_lighting, door_map_copy)
         self.sc.blit(self.sc_light, (0, 0))
         self.player.paint(self.sc)
         for door in self.doors:

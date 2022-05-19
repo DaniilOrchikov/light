@@ -67,7 +67,7 @@ class Player:
         rays = calculating_lightning(self.pos, self.angle, FOV, False, world_map, door_map, self.rect.y)
         rays = [(i[0] - self.scroll[0], i[1] - self.scroll[1]) for i in rays]
         try:
-            pygame.draw.polygon(sc_light, (234, 224, 191, 100), rays)
+            pygame.draw.polygon(sc_light, (0, 0, 0), rays)
         except ValueError:
             pass
         sc_light.blit(self.light_im, (self.rect.x - self.scroll[0] - self.light_im.get_width() // 2 + self.size // 2,

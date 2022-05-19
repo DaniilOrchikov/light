@@ -6,18 +6,7 @@ from settings import *
 def generate_light_rect(x, y, x1, y1):
     light_rect = []
     light_rect.extend(
-        [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
-         for i in line(x, y, int(x1), int(y1))])
-    # for j in range(0, 2):
-    #     light_rect.extend(
-    #         [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
-    #          for i in line(x, y, int(x1), int(y1))])
-    #     light_rect.extend(
-    #         [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE) + j) * AVERAGE)
-    #          for i in line(x, y, int(x1), int(y1))])
-    #     light_rect.extend(
-    #         [((int(i[0] // AVERAGE) + j) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE)
-    #          for i in line(x, y, int(x1), int(y1))])
+        [((int(i[0] // AVERAGE)) * AVERAGE, (int(i[1] // AVERAGE)) * AVERAGE) for i in line(x, y, int(x1), int(y1))])
     return list(set(light_rect))
 
 
@@ -220,6 +209,25 @@ class Door:
         self.angle = normal_angle(self.angle)
         if self.open_count:
             self.open_count -= 1
-            self.angle += math.pi / 4 / self.OPEN_COUNT
+            if self.direction == '>':
+                if self.y <= self.player.rect.y:
+                    self.angle -= math.pi / 4 / self.OPEN_COUNT
+                else:
+                    self.angle += math.pi / 4 / self.OPEN_COUNT
+            elif self.direction == '<':
+                if self.y <= self.player.rect.y:
+                    self.angle += math.pi / 4 / self.OPEN_COUNT
+                else:
+                    self.angle -= math.pi / 4 / self.OPEN_COUNT
+            elif self.direction == 'V':
+                if self.x < self.player.rect.x:
+                    self.angle += math.pi / 4 / self.OPEN_COUNT
+                else:
+                    self.angle -= math.pi / 4 / self.OPEN_COUNT
+            else:
+                if self.x < self.player.rect.x:
+                    self.angle -= math.pi / 4 / self.OPEN_COUNT
+                else:
+                    self.angle += math.pi / 4 / self.OPEN_COUNT
             self.push()
         self.generate()
