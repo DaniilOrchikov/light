@@ -1,5 +1,4 @@
 import sys
-
 from settings import *
 
 pygame.init()
@@ -29,7 +28,6 @@ while True:
                 sys.exit()
 
     player.movement(manager.doors)
-    screen.fill((80, 80, 255))
 
     manager.paint()
     manager.fps(clock)

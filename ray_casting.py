@@ -30,9 +30,9 @@ def calculating_lightning(pos, angle, fov, its_lamp, world_map, door_map, player
 @njit(fastmath=True, cache=True)
 def ray_casting(pos, angle, fov, its_lamp, world_map, door_map):
     rays = [(0.0, 0.0)]
-    m_d = MAX_DEPTH * 1.2
+    m_d = MAX_DEPTH
     if not its_lamp:
-        m_d = MAX_DEPTH * 1.9
+        m_d = MAX_DEPTH * 1.7
         rays = [(float(pos[0]), float(pos[1]))]
     ox, oy = pos
     xm, ym = mapping(ox, oy, TILE)

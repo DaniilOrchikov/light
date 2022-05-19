@@ -3,8 +3,8 @@ import pygame
 from random import randint
 
 # game settings
-WIDTH = 990 * 1200 // 990
-HEIGHT = 558 * 1200 // 990
+WIDTH = 990 * 1200 // 1200
+HEIGHT = 558 * 1200 // 1200
 HALF_WIDTH = WIDTH // 2
 HALF_HEIGHT = HEIGHT // 2
 FPS = 60
@@ -12,11 +12,11 @@ TILE = 18
 FPS_POS = (WIDTH - 65, 5)
 
 # ray casting settings
-FOV = math.pi / 3
+FOV = math.pi / 2
 HALF_FOV = FOV / 2
 NUM_RAYS = 150
 MAX_DEPTH = 300
-RENDERING_RANGE = [MAX_DEPTH * 3.3, MAX_DEPTH * 2.4]
+RENDERING_RANGE = [MAX_DEPTH * 3, MAX_DEPTH * 2.1]
 
 # player settings
 player_pos = (100, 100)

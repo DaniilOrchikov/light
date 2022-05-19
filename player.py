@@ -7,7 +7,7 @@ from settings import *
 
 @njit(fastmath=True, cache=True)
 def get_angle(mouse_pos):
-    return math.atan2(mouse_pos[1] - HALF_HEIGHT, mouse_pos[0] - HALF_WIDTH)
+    return math.atan2(mouse_pos[1] - HALF_HEIGHT - 8, mouse_pos[0] - HALF_WIDTH - 8)
 
 
 class Player:
@@ -59,8 +59,8 @@ class Player:
         mouse_pos = pygame.mouse.get_pos()
         self.angle = get_angle(mouse_pos)
 
-        self.scroll[0] += round((self.rect.x - self.scroll[0] - HALF_WIDTH) / 10, 2)
-        self.scroll[1] += round((self.rect.y - self.scroll[1] - HALF_HEIGHT) / 10, 2)
+        self.scroll[0] += round((self.rect.x - self.scroll[0] - HALF_WIDTH) / 10)
+        self.scroll[1] += round((self.rect.y - self.scroll[1] - HALF_HEIGHT) / 10)
 
     def paint_light(self, sc_light, world_map, door_map):
         rays = calculating_lightning(self.pos, self.angle, FOV, False, world_map, door_map, self.rect.y)
