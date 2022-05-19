@@ -16,6 +16,7 @@ light_emitter_map = set()
 foreground_world_map = set()
 background_map_l1 = []
 background_map_l2 = []
+background_map_l3 = []
 doors = []
 
 im_map = Image.open('im_map.png')
@@ -39,50 +40,46 @@ for j in range(height):
             light_emitter_map.add(LightEmitter(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(None)
+            background_map_l1.append(Floor(i * TILE, j * TILE))
         elif (r, g, b) == (212, 131, 212):  # окно
             world_map[-1].append(Window(i * TILE, j * TILE))
             physics_world_map[-1].append(Window(i * TILE, j * TILE))
+        elif (r, g, b) == (255, 168, 255):  # имитация окна:
+            physics_world_map[-1].append(Tile(i * TILE, j * TILE))
+            world_map[-1].append(None)
         elif (r, g, b) == (193, 193, 193):  # пол
             background_map_l1.append(Floor(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(Floor(i * TILE, j * TILE))
         # двери
         elif (r, g, b) == (255, 0, 0):  # ^
-            if pixels[i - 1, j + 1] == (0, 0, 0, 255):
-                doors.append(Door(i * TILE - 1, (j + 1) * TILE, math.pi / 2 * 3))
-            else:
-                doors.append(Door(i * TILE + AVERAGE, (j + 1) * TILE, math.pi / 2 * 3))
+            doors.append(Door(i * TILE + AVERAGE, (j + 1) * TILE, math.pi / 2 * 3))
             background_map_l1.append(Floor(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(None)
         elif (r, g, b) == (255, 129, 129):  # >
-            if pixels[i - 1, j - 1] == (0, 0, 0, 255):
-                doors.append(Door(i * TILE, j * TILE, 0))
-            else:
-                doors.append(Door(i * TILE, j * TILE + TILE // 2, 0))
+            doors.append(Door(i * TILE, j * TILE + TILE // 2, 0))
             background_map_l1.append(Floor(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(None)
         elif (r, g, b) == (178, 0, 0):  # V
-            if pixels[i - 1, j - 1] == (0, 0, 0, 255):
-                doors.append(Door(i * TILE - 1, j * TILE, math.pi / 2))
-            else:
-                doors.append(Door(i * TILE + TILE // 2 - 1, j * TILE, math.pi / 2))
+            doors.append(Door(i * TILE + TILE // 2, j * TILE, math.pi / 2))
             background_map_l1.append(Floor(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(None)
         elif (r, g, b) == (182, 97, 97):  # <
-            if pixels[i + 1, j - 1] == (0, 0, 0, 255):
-                doors.append(Door((i + 1) * TILE, j * TILE, math.pi))
-            else:
-                doors.append(Door((i + 1) * TILE, j * TILE + TILE // 2 + 1, math.pi))
+            doors.append(Door((i + 1) * TILE, j * TILE + TILE // 2 + 1, math.pi))
             background_map_l1.append(Floor(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(None)
         else:
             background_map_l1.append(Dirt(i * TILE, j * TILE))
             if not randint(0, 10):
-                background_map_l2.append(Grass(i * TILE, j * TILE))
+                background_map_l2.append(Mud(i * TILE, j * TILE))
+            if not randint(0, 10):
+                background_map_l3.append(Grass(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(None)
+        if (r, g, b) == (28, 0, 255):
+            player_pos = (i * TILE, j * TILE)
 im_map.close()

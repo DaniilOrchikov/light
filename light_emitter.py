@@ -9,7 +9,8 @@ class LightEmitter:
 
     def __init__(self, x, y):
         self.x, self.y = x, y
-        self.im = pygame.image.load('data/tiles/lamp.png').convert_alpha()
+        self.on_im = pygame.image.load('data/lamp/on.png').convert_alpha()
+        self.off_im = pygame.image.load('data/lamp/off.png').convert_alpha()
         self.sc_light = pygame.Surface((WIDTH, HEIGHT))
         self.light_im = LightEmitter.light_im.convert_alpha()
         self.rect = pygame.Rect(self.x - TILE // 4, self.y - TILE // 4, TILE + TILE // 2, TILE + TILE // 2)
@@ -21,7 +22,8 @@ class LightEmitter:
         self.on = not self.on
         self.turn_on_time = self.TURN_ON_TIME
 
-    def paint_light(self, sc, sc1, intensity, scroll, world_map, door_map, player_pos_y):
+    def paint(self, sc, sc1, intensity, scroll, world_map, door_map, player_pos_y, screen):
+        # освещение
         if self.turn_on_time:
             self.turn_on_time -= 1
         if self.on and self.turn_on_time % randint(2, 7) == 0:
@@ -32,8 +34,10 @@ class LightEmitter:
                 pygame.draw.polygon(sc, intensity, rays)
             except ValueError:
                 pass
-            sc1.blit(self.light_im, (self.x - scroll[0] - self.light_im.get_width() // 2 + TILE // 2,
-                                     self.y - scroll[1] - self.light_im.get_height() // 2 + TILE // 2))
-
-    def paint(self, screen):
-        screen.blit(self.im, (self.x, self.y))
+            sc1.blit(self.light_im, (self.x - scroll[0] - self.light_im.get_width() // 2 + self.on_im.get_width() // 2,
+                                     self.y - scroll[
+                                         1] - self.light_im.get_height() // 2 + self.on_im.get_height() // 2))
+        # спрайт лампы
+            screen.blit(self.on_im, (self.x, self.y))
+        else:
+            screen.blit(self.off_im, (self.x, self.y))

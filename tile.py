@@ -53,6 +53,13 @@ class Dirt(Tile):
         self.type = 'dirt'
 
 
+class Mud(Tile):
+    def __init__(self, x, y):
+        super(Mud, self).__init__(x, y)
+        self.im = pygame.image.load(f'data/mud/{randint(1, len(listdir("data/mud")))}.png').convert_alpha()
+        self.type = 'mud'
+
+
 class Wall(Tile):
     def __init__(self, x, y):
         super(Wall, self).__init__(x, y)

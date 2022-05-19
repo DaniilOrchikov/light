@@ -13,21 +13,23 @@ class Manager:
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
-        self.sc_background = pygame.Surface((WIDTH * 3, HEIGHT * 3), pygame.SRCALPHA)
+        self.sc_background = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
         self.sc_background.fill((0, 0, 0, 0))
-        self.sc_middle_plan = pygame.Surface((WIDTH * 3, HEIGHT * 3), pygame.SRCALPHA)
+        self.sc_middle_plan = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
         self.sc_middle_plan.fill((0, 0, 0, 0))
-        self.sc_foreground = pygame.Surface((WIDTH * 3, HEIGHT * 3), pygame.SRCALPHA)
+        self.sc_lamp = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
+        self.sc_lamp.fill((0, 0, 0, 0))
+        self.sc_foreground = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
         self.sc_foreground.fill((0, 0, 0, 0))
         for tile in background_map_l1:
             tile.paint(self.sc_background)
         for tile in background_map_l2:
             tile.paint(self.sc_background)
+        for tile in background_map_l3:
+            tile.paint(self.sc_background)
         create_level(self.sc_middle_plan)
         for tile in foreground_world_map:
             tile.paint(self.sc_foreground)
-        for i in light_emitter_map:
-            i.paint(self.sc_middle_plan)
         self.sc_light_emitter = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light_emitter1 = pygame.Surface((WIDTH, HEIGHT))
 
@@ -40,6 +42,7 @@ class Manager:
         color_shift = 0
         self.sc.fill((144 + color_shift, 144 + color_shift, 144 + color_shift))
         self.sc_light.fill((50, 50, 50, 0))
+        self.sc_lamp.fill((0, 0, 0, 0))
 
         door_map_copy = door_map.copy()
         for door in self.doors:
@@ -52,10 +55,11 @@ class Manager:
         for i in light_emitter_map:
             if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
                     self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + RENDERING_RANGE[1]:
-                i.paint_light(self.sc_light_emitter, self.sc_light_emitter1, (0, 0, 0),
-                              self.player.scroll, map_for_lighting, door_map_copy, self.player.rect.y)
+                i.paint(self.sc_light_emitter, self.sc_light_emitter1, (0, 0, 0),
+                        self.player.scroll, map_for_lighting, door_map_copy, self.player.rect.y, self.sc_lamp)
         self.sc.blit(self.sc_background, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter1, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+        self.sc.blit(self.sc_lamp, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self.player.paint_light(self.sc_light, map_for_lighting, door_map_copy)

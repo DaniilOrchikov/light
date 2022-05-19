@@ -1,6 +1,7 @@
 import pygame.draw
 from numba import njit
 
+from map import player_pos
 from ray_casting import calculating_lightning
 from settings import *
 

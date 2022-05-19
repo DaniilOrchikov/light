@@ -19,7 +19,6 @@ MAX_DEPTH = 300
 RENDERING_RANGE = [MAX_DEPTH * 3, MAX_DEPTH * 2.1]
 
 # player settings
-player_pos = (100, 100)
 player_angle = 0
 player_speed = 2
 player_shift_speed = 4
