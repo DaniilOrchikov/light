@@ -1,5 +1,4 @@
-import time
-from math import sin
+import pygame.draw
 
 from level import create_level
 from settings import *
@@ -22,8 +21,17 @@ class Manager:
         self.sc_middle_plan.fill((0, 0, 0, 0))
         self.sc_lamp = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
         self.sc_lamp.fill((0, 0, 0, 0))
+        self.sc_bounding_trees = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
+        self.sc_bounding_trees.fill((0, 0, 0, 0))
         self.sc_foreground = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
         self.sc_foreground.fill((0, 0, 0, 0))
+
+        self.sc_foreground_del = pygame.Surface((WIDTH, HEIGHT),
+                                                pygame.SRCALPHA)  # для удаления деревьев на месте курсора
+        self.sc_foreground_del.fill((255, 255, 255))
+        self.sc_foreground_copy = pygame.Surface((WIDTH, HEIGHT),
+                                                 pygame.SRCALPHA)  # копия слоя с деревьями для корректной работы их удаления
+
         self.sky_screen = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.sky_screen.fill((0, 0, 0, 0))
         for tile in background_map_l1:
@@ -34,7 +42,10 @@ class Manager:
             tile.paint(self.sc_background)
         create_level(self.sc_middle_plan)
         for tile in foreground_world_map:
-            tile.paint(self.sc_foreground)
+            if tile.type == 'tree':
+                tile.paint(self.sc_foreground)
+            else:
+                tile.paint(self.sc_bounding_trees)
         self.sc_light_emitter = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light_emitter1 = pygame.Surface((WIDTH, HEIGHT))
 
@@ -44,11 +55,17 @@ class Manager:
         self.screen.blit(render, FPS_POS)
 
     def paint(self, sunlight_intensity):
-        color_shift = 0
-        self.sc.fill((144 + color_shift, 144 + color_shift, 144 + color_shift))
+        self.sc.fill((105, 105, 105))
         self.sc_light.fill((50, 50, 50, 0))
         self.sc_lamp.fill((0, 0, 0, 0))
         self.sky_screen.fill((0, 0, 0, 0))
+        self.sc_foreground_copy.fill((0, 0, 0, 0))
+        self.sc_foreground_del.fill((255, 255, 255))
+        for i in range(12):
+            pygame.draw.circle(self.sc_foreground_del, (0, 0, 0, 180 - i * 15), pygame.mouse.get_pos(), 100 - i * 3)
+            pygame.draw.circle(self.sc_foreground_del, (0, 0, 0, 180 - i * 15),
+                               (self.player.pos[0] - self.player.scroll[0], self.player.pos[1] - self.player.scroll[1]),
+                               90 - i * 3)
 
         door_map_copy = door_map.copy()
         for door in self.doors:
@@ -61,7 +78,7 @@ class Manager:
         for i in light_emitter_map:
             if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
                     self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + RENDERING_RANGE[1]:
-                i.paint(self.sc_light_emitter, self.sc_light_emitter1, (0, 0, 0),
+                i.paint(self.sc_light_emitter, self.sc_light_emitter1, (10, 10, 10),
                         self.player.scroll, map_for_lighting, door_map_copy, self.player.rect.y, self.sc_lamp)
         self.sc.blit(self.sc_background, (-self.player.scroll[0], -self.player.scroll[1]))
 
@@ -78,5 +95,9 @@ class Manager:
         self.player.paint(self.sc)
         for door in self.doors:
             door.paint(self.sc, self.player.scroll)
-        self.sc.blit(self.sc_foreground, (-self.player.scroll[0], -self.player.scroll[1]))
+        self.sc_foreground_copy.blit(self.sc_foreground, (-self.player.scroll[0], -self.player.scroll[1]))
+        self.sc_foreground_copy.blit(self.sc_foreground_del, (0, 0),
+                                     special_flags=pygame.BLEND_RGBA_MIN)
+        self.sc.blit(self.sc_foreground_copy, (0, 0))
+        self.sc.blit(self.sc_bounding_trees, (-self.player.scroll[0], -self.player.scroll[1]))
         self.screen.blit(self.sc, (0, 0))

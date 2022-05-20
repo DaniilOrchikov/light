@@ -8,7 +8,7 @@ def create_level(screen):
         for x in range(len(world_map[0])):
             if world_map[y][x] is not None:
                 tile = world_map[y][x]
-                if tile.type == 'wall':
+                if tile.type == 'wall' or tile.type == 'stump':
                     tile.paint(screen)
                 elif tile.type == 'window':
                     if world_map[y - 1][x] is not None and world_map[y - 1][x].type == 'wall':

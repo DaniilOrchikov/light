@@ -16,7 +16,7 @@ player = Player(physics)
 manager = Manager(screen, player)
 pygame.mouse.set_visible(False)
 cursor = Cursor()
-sunlight_intensity = 0
+sunlight_intensity = 90
 
 while True:
     events = pygame.event.get()

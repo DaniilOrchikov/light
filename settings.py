@@ -14,7 +14,7 @@ FPS_POS = (WIDTH - 65, 5)
 # ray casting settings
 FOV = math.pi / 2
 HALF_FOV = FOV / 2
-NUM_RAYS = 150
+NUM_RAYS = 90
 MAX_DEPTH = 300
 RENDERING_RANGE = [MAX_DEPTH * 3, MAX_DEPTH * 2.1]
 

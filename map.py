@@ -35,6 +35,11 @@ for j in range(height):
             foreground_world_map.add(Tree(i * TILE, j * TILE))
             map_for_lighting[(i * TILE, j * TILE)] = 1
             physics_world_map[-1].append(Tile(i * TILE, j * TILE))
+            world_map[-1].append(Stump(i * TILE, j * TILE))
+        elif (r, g, b) == (0, 129, 0):  # ограничивающее дерево
+            foreground_world_map.add(BoundingTree(i * TILE, j * TILE))
+            map_for_lighting[(i * TILE, j * TILE)] = 1
+            physics_world_map[-1].append(Tile(i * TILE, j * TILE))
             world_map[-1].append(Tile(i * TILE, j * TILE))
         elif (r, g, b) == (220, 220, 0):  # лампа
             light_emitter_map.add(LightEmitter(i * TILE, j * TILE))

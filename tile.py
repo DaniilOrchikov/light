@@ -83,6 +83,20 @@ class Tree(Tile):
         self.im = pygame.transform.flip(pygame.transform.rotate(self.im, randrange(0, 360, 10)), bool(randint(0, 1)),
                                         bool(randint(0, 1)))
         self.margins = [self.im.get_width() // 2 - TILE // 2, self.im.get_height() // 2 - TILE // 2]
+        self.type = 'tree'
 
     def paint(self, sc):
         sc.blit(self.im, (self.x - self.margins[0], self.y - self.margins[1]))
+
+
+class Stump(Tile):
+    def __init__(self, x, y):
+        super(Stump, self).__init__(x, y)
+        self.im = pygame.image.load('data/stump/1.png').convert_alpha()
+        self.type = 'stump'
+
+
+class BoundingTree(Tree):
+    def __init__(self, x, y):
+        super(BoundingTree, self).__init__(x, y)
+        self.type = 'bounding_tree'
