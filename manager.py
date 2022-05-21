@@ -1,45 +1,54 @@
-import pygame.draw
-
 from level import create_level
-from settings import *
 from map import *
+from line_collider import LineCollider
 
 
 class Manager:
-    def __init__(self, screen, player):
+    def __init__(self, screen, player, clock):
+        scale = 10
         self.screen = screen
         self.player = player
         self.doors = doors
+        self.objects = []
         for i in self.doors:
             i.add_player(self.player)
         self.sc = pygame.Surface((WIDTH, HEIGHT))
         self.sc_light = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
-        self.sc_background = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
+        self.sc_background = pygame.Surface((WIDTH * scale, HEIGHT * scale), pygame.SRCALPHA)
         self.sc_background.fill((0, 0, 0, 0))
-        self.sc_middle_plan = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
+        self.sc_middle_plan = pygame.Surface((WIDTH * scale, HEIGHT * scale), pygame.SRCALPHA)
         self.sc_middle_plan.fill((0, 0, 0, 0))
-        self.sc_lamp = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
+        self.sc_lamp = pygame.Surface((WIDTH * scale, HEIGHT * scale), pygame.SRCALPHA)
         self.sc_lamp.fill((0, 0, 0, 0))
-        self.sc_bounding_trees = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
+        self.sc_bounding_trees = pygame.Surface((WIDTH * scale, HEIGHT * scale), pygame.SRCALPHA)
         self.sc_bounding_trees.fill((0, 0, 0, 0))
-        self.sc_foreground = pygame.Surface((WIDTH * 6, HEIGHT * 6), pygame.SRCALPHA)
+        self.sc_foreground = pygame.Surface((WIDTH * scale, HEIGHT * scale), pygame.SRCALPHA)
         self.sc_foreground.fill((0, 0, 0, 0))
 
         self.sc_foreground_del = pygame.Surface((WIDTH, HEIGHT),
-                                                pygame.SRCALPHA)  # для удаления деревьев на месте курсора
+                                                pygame.SRCALPHA)  # для удаления листвы на месте курсора
         self.sc_foreground_del.fill((255, 255, 255))
         self.sc_foreground_copy = pygame.Surface((WIDTH, HEIGHT),
-                                                 pygame.SRCALPHA)  # копия слоя с деревьями для корректной работы их удаления
+                                                 pygame.SRCALPHA)  # копия слоя с деревьями для корректной работы удаления листвы
 
         self.sky_screen = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.sky_screen.fill((0, 0, 0, 0))
         for tile in background_map_l1:
             tile.paint(self.sc_background)
+        # чтобы окно не зависало при загрузке уровня
+        pygame.event.get()
+        # -------------------------------------------
         for tile in background_map_l2:
             tile.paint(self.sc_background)
+        # чтобы окно не зависало при загрузке уровня
+        pygame.event.get()
+        # -------------------------------------------
         for tile in background_map_l3:
             tile.paint(self.sc_background)
+        # чтобы окно не зависало при загрузке уровня
+        pygame.event.get()
+        # -------------------------------------------
         create_level(self.sc_middle_plan)
         for tile in foreground_world_map:
             if tile.type == 'tree':
@@ -62,8 +71,8 @@ class Manager:
         self.sc_foreground_copy.fill((0, 0, 0, 0))
         self.sc_foreground_del.fill((255, 255, 255))
         for i in range(12):
-            pygame.draw.circle(self.sc_foreground_del, (0, 0, 0, 180 - i * 15), pygame.mouse.get_pos(), 100 - i * 3)
-            pygame.draw.circle(self.sc_foreground_del, (0, 0, 0, 180 - i * 15),
+            pygame.draw.circle(self.sc_foreground_del, (15, 15, 15, 240 - i * 20), pygame.mouse.get_pos(), 100 - i * 3)
+            pygame.draw.circle(self.sc_foreground_del, (15, 15, 15, 240 - i * 20),
                                (self.player.pos[0] - self.player.scroll[0], self.player.pos[1] - self.player.scroll[1]),
                                90 - i * 3)
 
@@ -100,4 +109,6 @@ class Manager:
                                      special_flags=pygame.BLEND_RGBA_MIN)
         self.sc.blit(self.sc_foreground_copy, (0, 0))
         self.sc.blit(self.sc_bounding_trees, (-self.player.scroll[0], -self.player.scroll[1]))
+        for i in self.objects:
+            i.paint(self.sc, self.player.scroll)
         self.screen.blit(self.sc, (0, 0))

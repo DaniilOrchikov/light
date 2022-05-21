@@ -1,3 +1,6 @@
+import sys
+import time
+
 from PIL import Image
 from numba.core import types
 from numba.typed import Dict
@@ -26,6 +29,9 @@ for j in range(height):
     physics_world_map.append([])
     world_map.append([])
     for i in range(width):
+        # чтобы окно не зависало при загрузке уровня
+        pygame.event.get()
+        # -------------------------------------------
         r, g, b, h = pixels[i, j]
         if (r, g, b) == (0, 0, 0):  # стена
             physics_world_map[-1].append(Wall(i * TILE, j * TILE))

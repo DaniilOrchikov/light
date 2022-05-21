@@ -1,18 +1,22 @@
+from math import sqrt
+
 import numpy as np
+import pygame.draw
+from numba import njit
 
 from map import physics_world_map
 from settings import *
 
 
-def door_collision(player_rect, door_rect):
-    player_lines = [(player_rect[0], player_rect[1], player_rect[0] + player_rect[2], player_rect[1]),
-                    (player_rect[0] + player_rect[2], player_rect[1], player_rect[0] + player_rect[2],
-                     player_rect[1] + player_rect[3]),
-                    (player_rect[0] + player_rect[2], player_rect[1] + player_rect[3], player_rect[0],
-                     player_rect[1] + player_rect[3]),
-                    (player_rect[0], player_rect[1] + player_rect[3], player_rect[0], player_rect[1])]
+def door_collision(object_rect, door_rect):
+    object_lines = [(object_rect[0], object_rect[1], object_rect[0] + object_rect[2], object_rect[1]),
+                    (object_rect[0] + object_rect[2], object_rect[1], object_rect[0] + object_rect[2],
+                     object_rect[1] + object_rect[3]),
+                    (object_rect[0] + object_rect[2], object_rect[1] + object_rect[3], object_rect[0],
+                     object_rect[1] + object_rect[3]),
+                    (object_rect[0], object_rect[1] + object_rect[3], object_rect[0], object_rect[1])]
     door_lines = [*door_rect]
-    for i in player_lines:
+    for i in object_lines:
         for j in door_lines:
             xmax1, xmin1, xmax2, xmin2, ymax1, ymin1, ymax2, ymin2 = \
                 max(i[0], i[2]), min(i[0], i[2]), max(j[0], j[2]), min(j[0], j[2]), \
@@ -23,8 +27,34 @@ def door_collision(player_rect, door_rect):
                                                      (j[2] - j[0], j[3] - j[1]), (i[2] - j[0], i[3] - j[1])
                 if (p1p3[0] * p1p2[1] - p1p2[0] * p1p3[1]) * (p1p4[0] * p1p2[1] - p1p4[1] * p1p2[0]) <= 0 and \
                         (p3p1[0] * p3p4[1] - p3p4[0] * p3p1[1]) * (p3p2[0] * p3p4[1] - p3p2[1] * p3p4[0]) <= 0:
-                    return i
+                    return True
     return False
+
+
+def intersection_point(x1_1, y1_1, x1_2, y1_2, x2_1, y2_1, x2_2, y2_2):
+    def point(x, y):
+        if min(x1_1, x1_2) <= x <= max(x1_1, x1_2):
+            return x, y
+        else:
+            return False
+
+    A1 = y1_1 - y1_2
+    B1 = x1_2 - x1_1
+    C1 = x1_1 * y1_2 - x1_2 * y1_1
+    A2 = y2_1 - y2_2
+    B2 = x2_2 - x2_1
+    C2 = x2_1 * y2_2 - x2_2 * y2_1
+
+    if B1 * A2 - B2 * A1 and A1:
+        y = (C2 * A1 - C1 * A2) / (B1 * A2 - B2 * A1)
+        x = (-C1 - B1 * y) / A1
+        return point(x, y)
+    elif B1 * A2 - B2 * A1 and A2:
+        y = (C2 * A1 - C1 * A2) / (B1 * A2 - B2 * A1)
+        x = (-C2 - B2 * y) / A2
+        return point(x, y)
+    else:
+        return False
 
 
 def roll(a, b, dx=1, dy=1):
@@ -39,6 +69,15 @@ def collision_test(rect, map):
             if tile.rect.colliderect(rect):
                 return tile
     return None
+
+
+@njit(fastmath=True, cache=True)
+def approximate_comparison(x, y, shift):
+    for q in range(-shift, shift):
+        for h in range(-shift, shift):
+            if x - q == y - h:
+                return True
+    return False
 
 
 class Physics:
@@ -76,7 +115,7 @@ class Physics:
                     collisions['top'] = True
                     rect.top = collision_tile.rect.bottom
         for door in doors:
-            door_col = door_collision((rect[0], rect[1], rect[2], rect[3]), door.line_collider)
+            door_col = door_collision((rect[0], rect[1], rect[2], rect[3]), door.line_collider.line_collider)
             if door_col:
                 collisions['door'] = door
                 break

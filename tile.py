@@ -32,9 +32,11 @@ class Floor(Tile):
 
 
 class Grass(Tile):
+    images = [pygame.image.load(f'data/grass/{i + 1}.png').convert_alpha() for i in range(len(listdir("data/grass")))]
+
     def __init__(self, x, y):
         super(Grass, self).__init__(x, y)
-        self.im = pygame.image.load(f'data/grass/{random.randint(1, len(listdir("data/grass")))}.png').convert_alpha()
+        self.im = Grass.images[randrange(len(Grass.images))]
         self.type = 'grass'
 
 
@@ -54,23 +56,29 @@ class Dirt(Tile):
 
 
 class Mud(Tile):
+    images = [pygame.image.load(f'data/mud/{i + 1}.png').convert_alpha() for i in range(len(listdir("data/mud")))]
+
     def __init__(self, x, y):
         super(Mud, self).__init__(x, y)
-        self.im = pygame.image.load(f'data/mud/{randint(1, len(listdir("data/mud")))}.png').convert_alpha()
+        self.im = Mud.images[randrange(len(Mud.images))]
         self.type = 'mud'
 
 
 class Wall(Tile):
+    image = pygame.image.load('data/tiles/wall.png').convert_alpha()
+
     def __init__(self, x, y):
         super(Wall, self).__init__(x, y)
-        self.im = pygame.image.load('data/tiles/wall.png').convert_alpha()
+        self.im = Wall.image
         self.type = 'wall'
 
 
 class Window(Tile):
+    image = pygame.image.load('data/tiles/window.png').convert_alpha()
+
     def __init__(self, x, y):
         super(Window, self).__init__(x, y)
-        self.im = pygame.image.load('data/tiles/window.png').convert_alpha()
+        self.im = Window.image
         self.type = 'window'
 
 
@@ -90,9 +98,11 @@ class Tree(Tile):
 
 
 class Stump(Tile):
+    image = pygame.image.load('data/stump/1.png').convert_alpha()
+
     def __init__(self, x, y):
         super(Stump, self).__init__(x, y)
-        self.im = pygame.image.load('data/stump/1.png').convert_alpha()
+        self.im = Stump.image
         self.type = 'stump'
 
 

@@ -1,4 +1,6 @@
 from numba import njit
+
+from line_collider import LineCollider
 from settings import *
 
 
@@ -59,7 +61,6 @@ class Door:
         self.direction = {math.pi: '<', 0: '>', math.pi / 2: 'V', math.pi / 2 * 3: '^'}[direction]
         self.rect = None
         self.player_stop = False
-        self.line_collider = None
         self.player = None
         self.light_rect = None
         self.x, self.y = x, y
@@ -71,6 +72,10 @@ class Door:
         self.x1 = self.length * math.cos(self.angle) + self.x
         self.y1 = self.length * math.sin(self.angle) + self.y
         self.im = pygame.image.load('data/door.png').convert_alpha()
+        self.width = 5
+        self.line_collider = LineCollider(-math.cos(self.angle - math.pi / 2) * self.width + self.x,
+                                          -math.sin(self.angle - math.pi / 2) * self.width + self.y,
+                                          self.angle - math.pi / 2, self.length, self.width * 2)
 
         self.OPEN_COUNT = 50
         self.open_count = 0
@@ -87,11 +92,9 @@ class Door:
             self.get_rect()
         else:
             self.rect = None
-        if self.player_stop:
-            self.get_line_collider()
-        else:
-            self.line_collider = [(self.x - 5, self.y - 5, self.x1 - 5, self.y1 - 5),
-                                  (self.x + 5, self.y + 5, self.x1 + 5, self.y1 + 5)]
+        self.line_collider.regenerate(-math.cos(self.angle - math.pi / 2) * self.width + self.x,
+                                      -math.sin(self.angle - math.pi / 2) * self.width + self.y,
+                                      self.angle - math.pi / 2, self.length, self.width * 2)
 
     def get(self, arr):
         for i in self.light_rect:
@@ -101,8 +104,7 @@ class Door:
     def paint(self, sc, scroll):
         im = pygame.transform.rotate(self.im, math.degrees(self.angle) * -1)
         sc.blit(im, (self.x - scroll[0] - im.get_width() // 2, self.y - scroll[1] - im.get_height() // 2))
-        # for i in self.line_collider:
-        #     pygame.draw.line(sc, 'red', (i[0] - scroll[0], i[1] - scroll[1]), (i[2] - scroll[0], i[3] - scroll[1]))
+        # self.line_collider.paint(sc, scroll)
 
     def open(self):
         self.is_open = True
@@ -171,22 +173,6 @@ class Door:
                 else:
                     self.rect = pygame.Rect(self.x - 4, self.y, 8, self.length)
 
-    def get_line_collider(self):
-        if self.direction == 'V':
-            self.line_collider = [(self.x, self.y - 5, self.x1, self.y1 - 5)]
-        elif self.direction == '^':
-            if self.x1 < self.x:
-                self.line_collider = [(self.x, self.y + 2, self.x1, self.y1 + 4)]
-            else:
-                self.line_collider = [(self.x, self.y + 4, self.x1, self.y1 + 5)]
-        elif self.direction == '>':
-            if self.y1 > self.y:
-                self.line_collider = [(self.x - 4, self.y, self.x1 - 5, self.y1)]
-            else:
-                self.line_collider = [(self.x - 8, self.y, self.x1 - 6, self.y1)]
-        else:
-            self.line_collider = [(self.x + 5, self.y, self.x1 + 4, self.y1)]
-
     def p_stop(self, angle):
         self.angle = normal_angle(self.angle)
         if self.direction == 'V':
@@ -210,22 +196,22 @@ class Door:
         if self.open_count:
             self.open_count -= 1
             if self.direction == '>':
-                if self.y <= self.player.rect.y:
+                if self.y1 <= self.player.rect.y:
                     self.angle -= math.pi / 4 / self.OPEN_COUNT
                 else:
                     self.angle += math.pi / 4 / self.OPEN_COUNT
             elif self.direction == '<':
-                if self.y <= self.player.rect.y:
+                if self.y1 <= self.player.rect.y:
                     self.angle += math.pi / 4 / self.OPEN_COUNT
                 else:
                     self.angle -= math.pi / 4 / self.OPEN_COUNT
             elif self.direction == 'V':
-                if self.x < self.player.rect.x:
+                if self.x1 < self.player.rect.x:
                     self.angle += math.pi / 4 / self.OPEN_COUNT
                 else:
                     self.angle -= math.pi / 4 / self.OPEN_COUNT
             else:
-                if self.x < self.player.rect.x:
+                if self.x1 < self.player.rect.x:
                     self.angle -= math.pi / 4 / self.OPEN_COUNT
                 else:
                     self.angle += math.pi / 4 / self.OPEN_COUNT

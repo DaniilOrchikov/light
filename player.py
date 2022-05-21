@@ -29,7 +29,7 @@ class Player:
     def pos(self):
         return self.rect.x + self.size // 2, self.rect.y + self.size // 2
 
-    def movement(self, door):
+    def movement(self, doors):
         self.right, self.top = 'None', 'None'
         self.is_move = False
         move = [0, 0]
@@ -51,7 +51,7 @@ class Player:
         if move[0] and move[1] and keys[pygame.K_LSHIFT]:
             move[0] = move[0] + (1 if move[0] < 0 else -1)
             move[1] = move[1] + (1 if move[1] < 0 else -1)
-        self.collisions = self.physics.movement(self.rect, move, door)
+        self.collisions = self.physics.movement(self.rect, move, doors)
         if self.collisions['door']:
             if self.is_move:
                 self.collisions['door'].push(self.right, self.top)

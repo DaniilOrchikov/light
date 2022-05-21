@@ -1,11 +1,22 @@
-from PIL import Image
+import numpy as np
 
-im = Image.open('data/light/clearance.png')
-pix = im.load()
-w, hhhhh = im.size
+def get_intersect(a1, a2, b1, b2):
+    """ 
+    Returns the point of intersection of the lines passing through a2,a1 and b2,b1.
+    a1: [x, y] a point on the first line
+    a2: [x, y] another point on the first line
+    b1: [x, y] a point on the second line
+    b2: [x, y] another point on the second line
+    """
+    s = np.vstack([a1,a2,b1,b2])        # s for stacked
+    h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
+    l1 = np.cross(h[0], h[1])           # get first line
+    l2 = np.cross(h[2], h[3])           # get second line
+    x, y, z = np.cross(l1, l2)          # point of intersection
+    if z == 0:                          # lines are parallel
+        return (float('inf'), float('inf'))
+    return (x/z, y/z)
 
-for i in range(w):
-    for j in range(hhhhh):
-        r, g, b, h = pix[i, j]
-        pix[i, j] = 255 - r, 255 - g, 255 - b, 255 - h
-im.save('data/light/clearance.png')
+
+if __name__ == "__main__":
+    print (get_intersect((5, 1), (5, 3), (1, 5), (10, 5)))
