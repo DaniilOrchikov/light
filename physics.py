@@ -1,7 +1,4 @@
-from math import sqrt
-
 import numpy as np
-import pygame.draw
 from numba import njit
 
 from map import physics_world_map

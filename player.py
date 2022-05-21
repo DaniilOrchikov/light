@@ -1,5 +1,6 @@
 import pygame.draw
 from numba import njit
+from pygame import gfxdraw
 
 from map import player_pos
 from ray_casting import calculating_lightning
@@ -30,6 +31,9 @@ class Player:
         return self.rect.x + self.size // 2, self.rect.y + self.size // 2
 
     def movement(self, doors):
+        doors = list(filter(
+            lambda door: self.rect.x - RENDERING_RANGE[0] < door.x < self.rect.x + RENDERING_RANGE[0] and self.rect.y -
+                         RENDERING_RANGE[1] < door.y < self.rect.y + RENDERING_RANGE[1], doors))
         self.right, self.top = 'None', 'None'
         self.is_move = False
         move = [0, 0]
@@ -66,10 +70,9 @@ class Player:
     def paint_light(self, sc_light, world_map, door_map):
         rays = calculating_lightning(self.pos, self.angle, FOV, False, world_map, door_map, self.rect.y)
         rays = [(i[0] - self.scroll[0], i[1] - self.scroll[1]) for i in rays]
-        try:
-            pygame.draw.polygon(sc_light, (0, 0, 0), rays)
-        except ValueError:
-            pass
+        if len(rays) > 2:
+            # pygame.draw.polygon(sc_light, (0, 0, 0), rays)
+            gfxdraw.filled_polygon(sc_light, rays, (0, 0, 0))
         sc_light.blit(self.light_im, (self.rect.x - self.scroll[0] - self.light_im.get_width() // 2 + self.size // 2,
                                       self.rect.y - self.scroll[1] - self.light_im.get_height() // 2 + self.size // 2))
 

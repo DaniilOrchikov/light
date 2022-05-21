@@ -1,4 +1,5 @@
 import pygame.draw
+from pygame import gfxdraw
 
 from ray_casting import calculating_lightning
 from settings import *
@@ -30,10 +31,9 @@ class LightEmitter:
             rays = calculating_lightning((self.x + TILE // 2, self.y + TILE // 2), 0, math.pi * 2, True, world_map,
                                          door_map, player_pos_y)[1:]
             rays = [(i[0] - scroll[0], i[1] - scroll[1]) for i in rays]
-            try:
-                pygame.draw.polygon(sc, intensity, rays)
-            except ValueError:
-                pass
+            if len(rays) > 2:
+                # pygame.draw.polygon(sc, intensity, rays)
+                gfxdraw.filled_polygon(sc, rays, intensity)
             sc1.blit(self.light_im, (self.x - scroll[0] - self.light_im.get_width() // 2 + self.on_im.get_width() // 2,
                                      self.y - scroll[
                                          1] - self.light_im.get_height() // 2 + self.on_im.get_height() // 2))

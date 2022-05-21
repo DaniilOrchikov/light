@@ -1,6 +1,3 @@
-import sys
-import time
-
 from PIL import Image
 from numba.core import types
 from numba.typed import Dict
@@ -8,7 +5,6 @@ from numba import int64
 
 from door import Door
 from light_emitter import LightEmitter
-from settings import *
 from tile import *
 
 physics_world_map = []
