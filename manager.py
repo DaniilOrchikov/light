@@ -31,8 +31,6 @@ class Manager:
         self.sc_background.fill((0, 0, 0, 0))
         self.sc_middle_plan = pygame.Surface((WIDTH * scale_w, HEIGHT * scale_h), pygame.SRCALPHA)
         self.sc_middle_plan.fill((0, 0, 0, 0))
-        self.sc_lamp = pygame.Surface((WIDTH * scale_w, HEIGHT * scale_h), pygame.SRCALPHA)
-        self.sc_lamp.fill((0, 0, 0, 0))
         self.sc_bounding_trees = pygame.Surface((WIDTH * scale_w, HEIGHT * scale_h), pygame.SRCALPHA)
         self.sc_bounding_trees.fill((0, 0, 0, 0))
         self.sc_foreground = pygame.Surface((WIDTH * scale_w, HEIGHT * scale_h), pygame.SRCALPHA)
@@ -93,10 +91,11 @@ class Manager:
     def paint(self, sunlight_intensity):
         self.sc.fill((105, 105, 105))
         self.sc_light.fill((50, 50, 50, 0))
-        self.sc_lamp.fill((0, 0, 0, 0))
         self.sky_screen.fill((0, 0, 0, 0))
         self.sc_foreground_copy.fill((0, 0, 0, 0))
         self.sc_foreground_del.fill((255, 255, 255))
+        self.sc_light_emitter1.fill((40, 40, 40))
+        self.sc_light_emitter.fill((50, 50, 50))
         for i in range(12):
             pygame.draw.circle(self.sc_foreground_del, (15, 15, 15, 240 - i * 20), pygame.mouse.get_pos(), 100 - i * 3)
             pygame.draw.circle(self.sc_foreground_del, (15, 15, 15, 240 - i * 20),
@@ -109,23 +108,20 @@ class Manager:
                     self.player.rect.y - RENDERING_RANGE[1] < door.y < self.player.rect.y + RENDERING_RANGE[1]:
                 door.move()
                 door_map_copy = door.get(door_map_copy)
-        self.sc_light_emitter1.fill((40, 40, 40))
-        self.sc_light_emitter.fill((50, 50, 50))
-        for i in light_emitter_map:
-            if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
-                    self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + RENDERING_RANGE[1]:
-                i.paint(self.sc_light_emitter, self.sc_light_emitter1, (10, 10, 10),
-                        self.player.scroll, map_for_lighting, door_map_copy, self.player.rect.y, self.sc_lamp)
         self.paint_map_pieces(self.sc, self.cut_sc_background)
         # self.sc.blit(self.sc_background, (-self.player.scroll[0], -self.player.scroll[1]))
 
         self.sky_screen.fill((0, 0, 0, 90 - sunlight_intensity))
         self.sc.blit(self.sky_screen, (0, 0))
 
+        for i in light_emitter_map:
+            if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
+                    self.player.rect.y - RENDERING_RANGE[1] < i.y < self.player.rect.y + RENDERING_RANGE[1]:
+                i.paint(self.sc_light_emitter, self.sc_light_emitter1, (10, 10, 10),
+                        self.player.scroll, map_for_lighting, door_map_copy, self.player.rect.y, self.sc, self.player)
         self.player.paint_light(self.sc_light_emitter, map_for_lighting, door_map_copy)
         self.sc.blit(self.sc_light_emitter1, (0, 0),
                      special_flags=pygame.BLEND_RGBA_SUB)  # это отрисовывается ореол света рядом с лампой
-        self.sc.blit(self.sc_lamp, (-self.player.scroll[0], -self.player.scroll[1]))
         self.paint_map_pieces(self.sc, self.cut_sc_middle_plan)
         # self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
         self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)

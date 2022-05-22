@@ -23,7 +23,7 @@ class LightEmitter:
         self.on = not self.on
         self.turn_on_time = self.TURN_ON_TIME
 
-    def paint(self, sc, sc1, intensity, scroll, world_map, door_map, player_pos_y, screen):
+    def paint(self, sc, sc1, intensity, scroll, world_map, door_map, player_pos_y, screen, player):
         # освещение
         if self.turn_on_time:
             self.turn_on_time -= 1
@@ -38,6 +38,6 @@ class LightEmitter:
                                      self.y - scroll[
                                          1] - self.light_im.get_height() // 2 + self.on_im.get_height() // 2))
         # спрайт лампы
-            screen.blit(self.on_im, (self.x, self.y))
+            screen.blit(self.on_im, (self.x - player.scroll[0], self.y - player.scroll[1]))
         else:
-            screen.blit(self.off_im, (self.x, self.y))
+            screen.blit(self.off_im, (self.x - player.scroll[0], self.y - player.scroll[1]))
