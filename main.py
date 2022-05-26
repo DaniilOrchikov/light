@@ -3,7 +3,7 @@ import sys
 from settings import *
 
 pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED | pygame.FULLSCREEN | pygame.DOUBLEBUF)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED)# | pygame.FULLSCREEN | pygame.DOUBLEBUF)
 
 font = pygame.font.SysFont('Arial', 36, bold=True)
 text = font.render('Загружаем ресурсы', True, 'white')

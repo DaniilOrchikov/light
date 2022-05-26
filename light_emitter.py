@@ -34,10 +34,10 @@ class LightEmitter:
             if len(rays) > 2:
                 # pygame.draw.polygon(sc, intensity, rays)
                 gfxdraw.filled_polygon(sc, rays, intensity)
-            sc1.blit(self.light_im, (self.x - scroll[0] - self.light_im.get_width() // 2 + self.on_im.get_width() // 2,
-                                     self.y - scroll[
-                                         1] - self.light_im.get_height() // 2 + self.on_im.get_height() // 2))
-        # спрайт лампы
+            sc1.blit(self.light_im, (
+                self.x - scroll[0] - self.light_im.get_width() // 2 + self.on_im.get_width() // 2,
+                self.y - scroll[1] - self.light_im.get_height() // 2 + self.on_im.get_height() // 2))
+            # спрайт лампы
             screen.blit(self.on_im, (self.x - player.scroll[0], self.y - player.scroll[1]))
         else:
             screen.blit(self.off_im, (self.x - player.scroll[0], self.y - player.scroll[1]))

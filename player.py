@@ -64,8 +64,8 @@ class Player:
         mouse_pos = pygame.mouse.get_pos()
         self.angle = get_angle(mouse_pos)
 
-        self.scroll[0] += round((self.rect.x - self.scroll[0] - HALF_WIDTH) / 10)
-        self.scroll[1] += round((self.rect.y - self.scroll[1] - HALF_HEIGHT) / 10)
+        self.scroll[0] += round((self.pos[0] - self.scroll[0] - HALF_WIDTH) / 10)
+        self.scroll[1] += round((self.pos[1] - self.scroll[1] - HALF_HEIGHT) / 10)
 
     def paint_light(self, sc_light, world_map, door_map):
         rays = calculating_lightning(self.pos, self.angle, FOV, False, world_map, door_map, self.rect.y)

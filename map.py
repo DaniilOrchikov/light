@@ -1,3 +1,5 @@
+import numpy
+import numpy as np
 from PIL import Image
 from numba.core import types
 from numba.typed import Dict
@@ -20,6 +22,7 @@ doors = []
 
 im_map = Image.open('im_map.png')
 width, height = im_map.size
+foreground_del = np.empty(shape=(height, width), dtype=numpy.int8)
 pixels = im_map.load()
 for j in range(height):
     physics_world_map.append([])
@@ -30,8 +33,9 @@ for j in range(height):
         # -------------------------------------------
         r, g, b, h = pixels[i, j]
         if (r, g, b) == (0, 0, 0):  # стена
-            physics_world_map[-1].append(Wall(i * TILE, j * TILE))
-            world_map[-1].append(Wall(i * TILE, j * TILE))
+            tile = Wall(i * TILE, j * TILE)
+            physics_world_map[-1].append(tile)
+            world_map[-1].append(tile)
             map_for_lighting[(i * TILE, j * TILE)] = 1
         elif (r, g, b) == (0, 255, 0):  # дерево
             foreground_world_map.add(Tree(i * TILE, j * TILE))
@@ -39,25 +43,28 @@ for j in range(height):
             physics_world_map[-1].append(Tile(i * TILE, j * TILE))
             world_map[-1].append(Stump(i * TILE, j * TILE))
         elif (r, g, b) == (0, 129, 0):  # ограничивающее дерево
+            tile = Tile(i * TILE, j * TILE)
             foreground_world_map.add(BoundingTree(i * TILE, j * TILE))
             map_for_lighting[(i * TILE, j * TILE)] = 1
-            physics_world_map[-1].append(Tile(i * TILE, j * TILE))
-            world_map[-1].append(Tile(i * TILE, j * TILE))
+            physics_world_map[-1].append(tile)
+            world_map[-1].append(tile)
         elif (r, g, b) == (220, 220, 0):  # лампа
             light_emitter_map.add(LightEmitter(i * TILE, j * TILE))
             physics_world_map[-1].append(None)
             world_map[-1].append(None)
             background_map_l1.append(Floor(i * TILE, j * TILE))
         elif (r, g, b) == (212, 131, 212):  # окно
-            world_map[-1].append(Window(i * TILE, j * TILE))
-            physics_world_map[-1].append(Window(i * TILE, j * TILE))
+            tile = Window(i * TILE, j * TILE)
+            world_map[-1].append(tile)
+            physics_world_map[-1].append(tile)
         elif (r, g, b) == (255, 168, 255):  # имитация окна:
             physics_world_map[-1].append(Tile(i * TILE, j * TILE))
             world_map[-1].append(None)
         elif (r, g, b) == (193, 193, 193):  # пол
-            background_map_l1.append(Floor(i * TILE, j * TILE))
+            tile = Floor(i * TILE, j * TILE)
+            background_map_l1.append(tile)
             physics_world_map[-1].append(None)
-            world_map[-1].append(Floor(i * TILE, j * TILE))
+            world_map[-1].append(tile)
         # двери
         elif (r, g, b) == (255, 0, 0):  # ^
             doors.append(Door(i * TILE + AVERAGE, (j + 1) * TILE, math.pi / 2 * 3))
@@ -89,4 +96,9 @@ for j in range(height):
             world_map[-1].append(None)
         if (r, g, b) == (28, 0, 255):
             player_pos = (i * TILE, j * TILE)
+        if (r, g, b) in [(193, 193, 193), (255, 0, 0), (255, 129, 129), (178, 0, 0), (182, 97, 97), (220, 220, 0),
+                         (28, 0, 255)]:
+            foreground_del[j, i] = 1
+        else:
+            foreground_del[j, i] = 0
 im_map.close()

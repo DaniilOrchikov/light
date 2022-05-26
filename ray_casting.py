@@ -18,9 +18,11 @@ def calculating_lightning(pos, angle, fov, its_lamp, world_map, door_map, player
         if not (arr[i - 1][0] == arr[i + 1][0] == arr[i][0] or arr[i - 1][1] == arr[i + 1][1] == arr[i][1]) and \
                 player_pos_y + HALF_HEIGHT + shift > arr[i][1] > player_pos_y - HALF_HEIGHT - shift:
             rays.append(arr[i])
-        elif not (arr[i - 1][1] >= player_pos_y + HALF_HEIGHT + shift and arr[i][1] >= player_pos_y + HALF_HEIGHT + shift and
+        elif not (arr[i - 1][1] >= player_pos_y + HALF_HEIGHT + shift and arr[i][
+            1] >= player_pos_y + HALF_HEIGHT + shift and
                   arr[i + 1][1] >= player_pos_y + HALF_HEIGHT + shift) and not (
-                arr[i - 1][1] <= player_pos_y - HALF_HEIGHT - shift and arr[i][1] <= player_pos_y - HALF_HEIGHT - shift and
+                arr[i - 1][1] <= player_pos_y - HALF_HEIGHT - shift and arr[i][
+            1] <= player_pos_y - HALF_HEIGHT - shift and
                 arr[i + 1][1] <= player_pos_y - HALF_HEIGHT - shift):
             rays.append(arr[i])
     rays.append(arr[-1])

@@ -2,6 +2,8 @@ import random
 from os import listdir
 from random import randrange
 
+import pygame
+
 from settings import *
 
 
@@ -98,12 +100,18 @@ class Tree(Tile):
 
 
 class Stump(Tile):
-    image = pygame.image.load('data/stump/1.png').convert_alpha()
+    images = [pygame.image.load('data/stump/' + i).convert_alpha() for i in listdir('data/stump')]
 
     def __init__(self, x, y):
         super(Stump, self).__init__(x, y)
-        self.im = Stump.image
+        self.im = Stump.images[randrange(len(Stump.images))]
+        self.im = pygame.transform.flip(pygame.transform.rotate(self.im, randrange(0, 360, 10)), bool(randint(0, 1)),
+                                        bool(randint(0, 1)))
         self.type = 'stump'
+
+    def paint(self, sc):
+        sc.blit(self.im,
+                (self.x - self.im.get_width() // 2 + TILE // 2, self.y - self.im.get_height() // 2 + TILE // 2))
 
 
 class BoundingTree(Tree):
