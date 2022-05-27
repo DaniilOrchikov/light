@@ -1,7 +1,7 @@
 import pygame.gfxdraw
 from numba import njit
 
-from connecting_squares import connecting_squares
+from connecting_squares import connecting_squares, paint_connecting_squares
 from level import create_level
 from map import *
 
@@ -45,6 +45,7 @@ def combining_rects(arr):
 class Manager:
     def __init__(self, screen, player):
         scale_w, scale_h = math.ceil(len(world_map[0]) * TILE / WIDTH), math.ceil(len(world_map) * TILE / HEIGHT)
+        self.scale = (scale_w, scale_h)
         self.screen = screen
         self.player = player
         self.doors = doors
@@ -70,7 +71,12 @@ class Manager:
         self.sc_foreground_del_1.fill((255, 255, 255))
         self.sc_foreground_copy = pygame.Surface((WIDTH, HEIGHT),
                                                  pygame.SRCALPHA)  # копия слоя с деревьями для корректной работы удаления листвы
-        self.foreground_del = connecting_squares(foreground_del)  # создаем места где будет в домах убираться листва
+
+        self.sc_foreground_del_2 = pygame.Surface((WIDTH * scale_w, HEIGHT * scale_h),
+                                                  pygame.SRCALPHA)  # для удаления листвы на месте пола
+        paint_connecting_squares(connecting_squares(foreground_del), self.sc_foreground_del_2,
+                                 (WIDTH * scale_w, HEIGHT * scale_h))
+        self.cut_sc_foreground_del_2 = cut_sc(self.sc_foreground_del_2)
 
         self.sky_screen = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.sky_screen.fill((0, 0, 0, 0))
@@ -140,12 +146,15 @@ class Manager:
         #                          (*self.offset_of_the_painting_position(tile[0] + i * 2, tile[1] + i * 2),
         #                           tile[2] - i * 4, tile[3] - i * 4))
         for i in range(12):
-            pygame.draw.circle(self.sc_foreground_del_1, (15, 15, 15, 240 - i * 20), pygame.mouse.get_pos(),
+            pygame.draw.circle(self.sc_foreground_del_1, (0, 0, 0, 240 - i * 20), pygame.mouse.get_pos(),
                                100 - i * 3)
-            pygame.draw.circle(self.sc_foreground_del_1, (15, 15, 15, 240 - i * 20),
+            pygame.draw.circle(self.sc_foreground_del_1, (0, 0, 0, 240 - i * 20),
                                self.offset_of_the_painting_position(self.player.pos[0], self.player.pos[1]),
                                120 - i * 3)
         self.sc_foreground_del.blit(self.sc_foreground_del_1, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+        self.paint_map_pieces(self.sc_foreground_del, self.cut_sc_foreground_del_2, pygame.BLEND_RGBA_MIN)
+        # self.sc_foreground_del.blit(self.sc_foreground_del_2, self.offset_of_the_painting_position(0, 0),
+        #                             special_flags=pygame.BLEND_RGBA_MIN)
 
         door_map_copy = door_map.copy()
         for door in self.doors:
@@ -156,8 +165,7 @@ class Manager:
         self.paint_map_pieces(self.sc, self.cut_sc_background)
         # self.sc.blit(self.sc_background, (-self.player.scroll[0], -self.player.scroll[1]))
 
-        self.sky_screen.fill((0, 0, 0, 90 - sunlight_intensity))
-        self.sc.blit(self.sky_screen, (0, 0))
+        self.sky_screen.fill((0, 0, 0, SUNLIGHT_INTENSITY - sunlight_intensity))
 
         for i in light_emitter_map:
             if self.player.rect.x - RENDERING_RANGE[0] < i.x < self.player.rect.x + RENDERING_RANGE[0] and \
@@ -169,8 +177,6 @@ class Manager:
                      special_flags=pygame.BLEND_RGBA_SUB)  # это отрисовывается ореол света рядом с лампой
         self.paint_map_pieces(self.sc, self.cut_sc_middle_plan)
         # self.sc.blit(self.sc_middle_plan, (-self.player.scroll[0], -self.player.scroll[1]))
-        self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
-        self.sc.blit(self.sc_light, (0, 0))
         self.player.paint(self.sc)
         for door in self.doors:
             if self.player.rect.x - RENDERING_RANGE[0] < door.x < self.player.rect.x + RENDERING_RANGE[0] and \
@@ -178,19 +184,27 @@ class Manager:
                 door.paint(self.sc, self.player.scroll)
         self.paint_map_pieces(self.sc_foreground_copy, self.cut_sc_foreground)
         # self.sc_foreground_copy.blit(self.sc_foreground, (-self.player.scroll[0], -self.player.scroll[1]))
-        self.sc_foreground_copy.blit(self.sc_foreground_del, (0, 0),
-                                     special_flags=pygame.BLEND_RGBA_MIN)
+        self.sc_foreground_copy.blit(self.sc_foreground_del, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
         self.sc.blit(self.sc_foreground_copy, (0, 0))
         self.paint_map_pieces(self.sc, self.cut_sc_bounding_trees)
         # self.sc.blit(self.sc_bounding_trees, (-self.player.scroll[0], -self.player.scroll[1]))
+        self.sc.blit(self.sky_screen, (0, 0))
+        self.sc.blit(self.sc_light_emitter, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+        self.sc.blit(self.sc_light, (0, 0))
         self.screen.blit(self.sc, (0, 0))
 
-    def paint_map_pieces(self, sc, sc_list):
+    def paint_map_pieces(self, sc, sc_list, flag=None):
         for i in range(-1, 2):
             for j in range(-1, 2):
-                sc.blit(sc_list[self.player.rect.y // HEIGHT + j][self.player.rect.x // WIDTH + i], (
-                    self.offset_of_the_painting_position((self.player.rect.x // WIDTH + i) * WIDTH,
-                                                         (self.player.rect.y // HEIGHT + j) * HEIGHT)))
+                if flag is not None:
+                    sc.blit(sc_list[self.player.rect.y // HEIGHT + j][self.player.rect.x // WIDTH + i], (
+                        self.offset_of_the_painting_position((self.player.rect.x // WIDTH + i) * WIDTH,
+                                                             (self.player.rect.y // HEIGHT + j) * HEIGHT)),
+                            special_flags=flag)
+                else:
+                    sc.blit(sc_list[self.player.rect.y // HEIGHT + j][self.player.rect.x // WIDTH + i], (
+                        self.offset_of_the_painting_position((self.player.rect.x // WIDTH + i) * WIDTH,
+                                                             (self.player.rect.y // HEIGHT + j) * HEIGHT)))
 
     def offset_of_the_painting_position(self, x, y):
         return round(x - self.player.scroll[0]), round(y - self.player.scroll[1])

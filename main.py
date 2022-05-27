@@ -3,7 +3,7 @@ import sys
 from settings import *
 
 pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED)# | pygame.FULLSCREEN | pygame.DOUBLEBUF)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED | pygame.FULLSCREEN | pygame.DOUBLEBUF)
 
 font = pygame.font.SysFont('Arial', 36, bold=True)
 text = font.render('Загружаем ресурсы', True, 'white')
@@ -21,7 +21,7 @@ player = Player(physics)
 manager = Manager(screen, player)
 pygame.mouse.set_visible(False)
 cursor = Cursor(player)
-sunlight_intensity = 90
+sunlight_intensity = SUNLIGHT_INTENSITY
 
 while True:
     events = pygame.event.get()
@@ -35,7 +35,7 @@ while True:
                 sys.exit()
 
     if pygame.key.get_pressed()[pygame.K_PAGEUP]:
-        if sunlight_intensity < 90:
+        if sunlight_intensity < SUNLIGHT_INTENSITY:
             sunlight_intensity += 1
     elif pygame.key.get_pressed()[pygame.K_PAGEDOWN]:
         if sunlight_intensity > 0:
